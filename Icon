@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#0a0605"/>
+  <!-- Grain texture -->
+  <filter id="grain">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+    <feBlend in="SourceGraphic" mode="multiply"/>
+  </filter>
+  <rect width="512" height="512" filter="url(#grain)" opacity="0.08"/>
+  <!-- Red slash top — uneven -->
+  <polygon points="0,0 512,0 512,7 0,9" fill="#aa0e0e"/>
+  <!-- Corner brackets — aged, slightly off -->
+  <path d="M24 26 L24 82 M24 26 L80 26" stroke="#4a3020" stroke-width="5" stroke-linecap="square" fill="none" transform="rotate(0.5,52,54)"/>
+  <path d="M488 24 L488 80 M488 24 L432 24" stroke="#4a3020" stroke-width="5" stroke-linecap="square" fill="none" transform="rotate(-0.3,460,52)"/>
+  <path d="M24 488 L24 432 M24 488 L80 488" stroke="#4a3020" stroke-width="5" stroke-linecap="square" fill="none"/>
+  <path d="M488 488 L488 432 M488 488 L432 488" stroke="#4a3020" stroke-width="5" stroke-linecap="square" fill="none"/>
+  <!-- APPR — cream, large -->
+  <text x="256" y="185" font-family="'Arial Narrow',Arial,sans-serif" font-size="88" font-weight="900" fill="#c4a07a" text-anchor="middle" letter-spacing="6" transform="rotate(-0.5,256,185)">APPR</text>
+  <!-- AI — red, oversized, slashed -->
+  <text x="256" y="330" font-family="'Arial Black',Arial,sans-serif" font-size="190" font-weight="900" fill="#aa0e0e" text-anchor="middle" letter-spacing="-8"
+    style="text-shadow: -2px 0 0 rgba(0,0,0,0.5)">AI</text>
+  <!-- The DK slash through AI -->
+  <rect x="68" y="252" width="378" height="4" fill="#c4a07a" opacity="0.55" transform="rotate(-4,256,254)"/>
+  <rect x="68" y="262" width="378" height="2" fill="#5e0808" opacity="0.35" transform="rotate(-4,256,264)"/>
+  <!-- SR — cream -->
+  <text x="256" y="428" font-family="'Arial Narrow',Arial,sans-serif" font-size="88" font-weight="900" fill="#c4a07a" text-anchor="middle" letter-spacing="6" transform="rotate(0.4,256,428)">SR</text>
+  <!-- Subtle stamp bottom -->
+  <text x="256" y="490" font-family="Arial,sans-serif" font-size="20" font-weight="400" fill="#2a1e10" text-anchor="middle" letter-spacing="12">APPRAISR</text>
+</svg>
+EOF
+echo "done"
