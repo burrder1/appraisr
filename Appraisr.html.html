@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APPRAISR — Point. Shoot. Cash Out.</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --border: #2a2a2a;
+    --accent: #c8f230;
+    --accent2: #8aab1a;
+    --text: #f0f0f0;
+    --muted: #666;
+    --danger: #ff4444;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    padding: 20px 32px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+
+  .tagline {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    flex: 1;
+  }
+
+  .key-status {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+  }
+
+  .key-status.active { color: var(--accent); border-color: var(--accent); }
+
+  /* API Key Gate */
+  .key-gate {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 24px;
+  }
+
+  .key-gate.hidden { display: none; }
+
+  .key-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 32px;
+    max-width: 480px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .key-box h2 {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    color: var(--accent);
+  }
+
+  .key-box p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .key-box a { color: var(--accent); }
+
+  .key-input-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .key-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    padding: 12px;
+    border-radius: 3px;
+    outline: none;
+  }
+
+  .key-input:focus { border-color: var(--accent); }
+
+  .key-save {
+    padding: 12px 20px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .key-note {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    min-height: calc(100vh - 65px);
+  }
+
+  .left-panel {
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 16px;
+  }
+
+  .right-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 16px;
+    overflow-y: auto;
+  }
+
+  .panel-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .panel-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .camera-wrap {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    min-height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #videoFeed { width: 100%; height: 100%; object-fit: cover; display: none; }
+  #capturedImage { width: 100%; height: 100%; object-fit: contain; display: none; background: #000; }
+
+  .camera-idle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    color: var(--muted);
+    text-align: center;
+    padding: 24px;
+  }
+
+  .camera-idle svg { opacity: 0.3; }
+  .camera-idle p { font-size: 13px; line-height: 1.5; }
+
+  .crosshair { position: absolute; inset: 0; pointer-events: none; display: none; }
+  .crosshair.active { display: block; }
+  .corner { position: absolute; width: 20px; height: 20px; border-color: var(--accent); border-style: solid; opacity: 0.8; }
+  .corner.tl { top: 16%; left: 16%; border-width: 2px 0 0 2px; }
+  .corner.tr { top: 16%; right: 16%; border-width: 2px 2px 0 0; }
+  .corner.bl { bottom: 16%; left: 16%; border-width: 0 0 2px 2px; }
+  .corner.br { bottom: 16%; right: 16%; border-width: 0 2px 2px 0; }
+
+  .scanline {
+    position: absolute; left: 16%; right: 16%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    top: 16%; display: none;
+    animation: scanDown 1.5s ease-in-out infinite;
+  }
+  @keyframes scanDown { 0% { top: 16%; opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { top: 84%; opacity: 0; } }
+  .scanline.active { display: block; }
+
+  .controls { display: flex; gap: 10px; }
+
+  .btn {
+    flex: 1; padding: 12px 16px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; border-radius: 3px;
+    transition: all 0.15s;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.primary { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
+  .btn.primary:hover { background: var(--accent2); border-color: var(--accent2); color: #000; }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn.primary:disabled { background: var(--surface2); color: var(--muted); border-color: var(--border); }
+
+  .upload-zone {
+    border: 1px dashed var(--border); border-radius: 3px;
+    padding: 16px; text-align: center; cursor: pointer;
+    transition: border-color 0.15s; font-size: 12px; color: var(--muted);
+  }
+  .upload-zone:hover { border-color: var(--accent); color: var(--accent); }
+  #fileInput { display: none; }
+
+  .idle-state {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 16px; color: var(--muted); text-align: center; padding: 40px;
+  }
+  .idle-state .big-dollar { font-family: 'Space Mono', monospace; font-size: 72px; color: var(--border); line-height: 1; }
+  .idle-state p { font-size: 13px; line-height: 1.6; max-width: 260px; }
+
+  .loading-state { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 24px; }
+  .loading-state.active { display: flex; }
+
+  .spinner { width: 40px; height: 40px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-steps { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 280px; }
+  .step { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
+  .step.active { color: var(--accent); }
+  .step.done { color: var(--text); }
+  .step-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+  .step.active .step-dot { background: var(--accent); box-shadow: 0 0 6px var(--accent); animation: pulse 1s ease-in-out infinite; }
+  .step.done .step-dot { background: var(--text); }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .results { display: none; flex-direction: column; gap: 20px; }
+  .results.active { display: flex; }
+
+  .item-header { display: flex; flex-direction: column; gap: 8px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .item-name { font-size: 22px; font-weight: 700; line-height: 1.2; }
+
+  .confidence-bar { display: flex; align-items: center; gap: 10px; }
+  .confidence-label { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; white-space: nowrap; }
+  .bar-track { flex: 1; height: 3px; background: var(--border); border-radius: 2px; }
+  .bar-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.8s ease; width: 0%; }
+  .confidence-pct { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--accent); min-width: 32px; text-align: right; }
+
+  .value-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .value-card { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; gap: 4px; }
+  .value-card.featured { grid-column: 1 / -1; border-color: var(--accent); background: rgba(200, 242, 48, 0.05); }
+  .card-label { font-family: 'Space Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); }
+  .card-value { font-family: 'Space Mono', monospace; font-size: 28px; font-weight: 700; color: var(--accent); line-height: 1; }
+  .value-card.featured .card-value { font-size: 38px; }
+  .card-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .desc-block { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 0 4px 4px 0; padding: 16px; font-size: 13px; line-height: 1.7; color: var(--text); }
+
+  .intel-section { display: flex; flex-direction: column; gap: 8px; }
+  .intel-item { display: flex; gap: 12px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; align-items: flex-start; }
+  .intel-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .intel-text { font-size: 12px; line-height: 1.5; color: var(--text); }
+  .intel-text strong { color: var(--accent); font-weight: 600; }
+
+  .platforms { display: flex; flex-wrap: wrap; gap: 8px; }
+  .platform-tag { font-family: 'Space Mono', monospace; font-size: 10px; padding: 5px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 2px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  .disclaimer { font-size: 10px; color: var(--muted); font-style: italic; line-height: 1.5; padding-top: 8px; border-top: 1px solid var(--border); }
+
+  .error-state { display: none; flex-direction: column; align-items: center; gap: 12px; padding: 32px; text-align: center; }
+  .error-state.active { display: flex; }
+  .error-state .err-icon { font-size: 32px; }
+  .error-state p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .error-state .err-detail { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--danger); }
+
+  canvas { display: none; }
+
+  @media (max-width: 768px) {
+    .main { grid-template-columns: 1fr; }
+    .left-panel { border-right: none; border-bottom: 1px solid var(--border); }
+    .card-value { font-size: 22px; }
+    .value-card.featured .card-value { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- API Key Gate -->
+<div class="key-gate" id="keyGate">
+  <div class="key-box">
+    <h2>🔑 Enter API Key</h2>
+    <p>APPRAISR uses the Claude AI API to identify and appraise items. Paste your Anthropic API key below to get started. It's saved only in your browser.</p>
+    <p>Get a key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys</p>
+    <div class="key-input-row">
+      <input class="key-input" type="password" id="keyInput" placeholder="sk-ant-..." />
+      <button class="key-save" onclick="saveKey()">Save & Start</button>
+    </div>
+    <p class="key-note">Your key is stored locally in your browser and never sent anywhere except directly to Anthropic's API.</p>
+  </div>
+</div>
+
+<header>
+  <div class="logo">APPRAISR</div>
+  <div class="tagline">AI Resale Intelligence</div>
+  <div class="key-status" id="keyStatus" onclick="changeKey()">🔑 Change Key</div>
+</header>
+
+<div class="main">
+  <div class="left-panel">
+    <div class="panel-label">Scan Item</div>
+    <div class="camera-wrap" id="cameraWrap">
+      <div class="camera-idle" id="cameraIdle">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+        <p>Start camera or upload a photo<br>to appraise any item</p>
+      </div>
+      <video id="videoFeed" autoplay playsinline muted></video>
+      <img id="capturedImage" alt="Captured item" />
+      <div class="crosshair" id="crosshair">
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+        <div class="scanline" id="scanline"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="btn" id="cameraBtn" onclick="toggleCamera()">📷 Camera</button>
+      <button class="btn primary" id="captureBtn" onclick="captureAndAppraise()" disabled>⚡ Appraise</button>
+    </div>
+    <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+      📁 &nbsp;Or drag & drop / click to upload a photo
+    </div>
+    <input type="file" id="fileInput" accept="image/*" onchange="handleUpload(event)">
+    <canvas id="snapCanvas"></canvas>
+  </div>
+
+  <div class="right-panel">
+    <div class="panel-label">Appraisal Report</div>
+    <div class="idle-state" id="idleState">
+      <div class="big-dollar">$?</div>
+      <p>Point your camera at any item — shoes, cards, vinyl, gear, collectibles — and hit Appraise.</p>
+    </div>
+    <div class="loading-state" id="loadingState">
+      <div class="spinner"></div>
+      <div class="loading-steps">
+        <div class="step active" id="step1"><div class="step-dot"></div>Identifying item</div>
+        <div class="step" id="step2"><div class="step-dot"></div>Researching market data</div>
+        <div class="step" id="step3"><div class="step-dot"></div>Calculating resale value</div>
+        <div class="step" id="step4"><div class="step-dot"></div>Building your report</div>
+      </div>
+    </div>
+    <div class="error-state" id="errorState">
+      <div class="err-icon">⚠️</div>
+      <p>Couldn't complete the appraisal.</p>
+      <div class="err-detail" id="errorDetail"></div>
+    </div>
+    <div class="results" id="resultsArea"></div>
+  </div>
+</div>
+
+<script>
+let stream = null;
+let cameraActive = false;
+let capturedDataURL = null;
+
+// API Key management
+function getKey() { return localStorage.getItem('appraisr_key') || ''; }
+
+function saveKey() {
+  const val = document.getElementById('keyInput').value.trim();
+  if (!val.startsWith('sk-ant-')) {
+    alert('That doesn\'t look like a valid Anthropic API key. It should start with sk-ant-');
+    return;
+  }
+  localStorage.setItem('appraisr_key', val);
+  document.getElementById('keyGate').classList.add('hidden');
+  document.getElementById('keyStatus').classList.add('active');
+  document.getElementById('keyStatus').textContent = '🔑 Key Saved';
+}
+
+function changeKey() {
+  document.getElementById('keyInput').value = getKey();
+  document.getElementById('keyGate').classList.remove('hidden');
+}
+
+// On load, check for saved key
+window.onload = () => {
+  const k = getKey();
+  if (k) {
+    document.getElementById('keyGate').classList.add('hidden');
+    document.getElementById('keyStatus').classList.add('active');
+    document.getElementById('keyStatus').textContent = '🔑 Key Saved';
+  }
+};
+
+async function toggleCamera() {
+  const btn = document.getElementById('cameraBtn');
+  const video = document.getElementById('videoFeed');
+  const idle = document.getElementById('cameraIdle');
+  const crosshair = document.getElementById('crosshair');
+  const captureBtn = document.getElementById('captureBtn');
+
+  if (cameraActive) {
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+    video.style.display = 'none';
+    video.srcObject = null;
+    idle.style.display = 'flex';
+    crosshair.classList.remove('active');
+    cameraActive = false;
+    btn.textContent = '📷 Camera';
+    captureBtn.disabled = true;
+    capturedDataURL = null;
+    document.getElementById('capturedImage').style.display = 'none';
+  } else {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+      });
+      video.srcObject = stream;
+      video.style.display = 'block';
+      idle.style.display = 'none';
+      crosshair.classList.add('active');
+      cameraActive = true;
+      btn.textContent = '✕ Stop';
+      captureBtn.disabled = false;
+    } catch(e) {
+      alert('Camera access denied. Try uploading a photo instead.');
+    }
+  }
+}
+
+function captureAndAppraise() {
+  const video = document.getElementById('videoFeed');
+  const canvas = document.getElementById('snapCanvas');
+  const img = document.getElementById('capturedImage');
+  const scanline = document.getElementById('scanline');
+
+  if (cameraActive && video.readyState >= 2) {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    capturedDataURL = canvas.toDataURL('image/jpeg', 0.9);
+    img.src = capturedDataURL;
+    img.style.display = 'block';
+    video.style.display = 'none';
+    scanline.classList.add('active');
+    setTimeout(() => scanline.classList.remove('active'), 1500);
+  }
+
+  if (capturedDataURL) runAppraisal(capturedDataURL);
+}
+
+function handleUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    capturedDataURL = e.target.result;
+    const img = document.getElementById('capturedImage');
+    img.src = capturedDataURL;
+    img.style.display = 'block';
+    document.getElementById('cameraIdle').style.display = 'none';
+    document.getElementById('videoFeed').style.display = 'none';
+    document.getElementById('captureBtn').disabled = false;
+    runAppraisal(capturedDataURL);
+  };
+  reader.readAsDataURL(file);
+}
+
+function setState(state) {
+  document.getElementById('idleState').style.display = state === 'idle' ? 'flex' : 'none';
+  document.getElementById('loadingState').classList.toggle('active', state === 'loading');
+  document.getElementById('errorState').classList.toggle('active', state === 'error');
+  document.getElementById('resultsArea').classList.toggle('active', state === 'results');
+}
+
+function setStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('step' + i);
+    el.classList.remove('active', 'done');
+    if (i < n) el.classList.add('done');
+    else if (i === n) el.classList.add('active');
+  }
+}
+
+async function runAppraisal(dataURL) {
+  const apiKey = getKey();
+  if (!apiKey) { changeKey(); return; }
+
+  setState('loading');
+  setStep(1);
+  const stepTimes = [0, 1800, 3200, 4800];
+  stepTimes.forEach((t, i) => setTimeout(() => setStep(i + 1), t));
+
+  const base64 = dataURL.split(',')[1];
+  const mediaType = dataURL.split(';')[0].split(':')[1];
+
+  const systemPrompt = `You are APPRAISR, an expert resale market appraiser with deep knowledge of collectibles, sneakers, electronics, vintage items, sports memorabilia, vinyl records, clothing, tools, cameras, and virtually every consumer category.
+
+When given an image, you precisely identify the item and provide real-world resale market value estimates.
+
+CRITICAL: Respond ONLY with a valid JSON object, no markdown, no backticks, no preamble. Use this exact schema:
+
+{
+  "identified": true,
+  "itemName": "Full descriptive name of the item",
+  "category": "Category (e.g. Sneakers, Vinyl, Electronics, Sports Card, Vintage Camera, etc.)",
+  "condition": "Condition assessment based on visible details",
+  "conditionScore": 85,
+  "confidenceScore": 90,
+  "valueRange": { "low": 45, "mid": 72, "high": 110 },
+  "recentSale": "Description of a recent comparable sale with price range",
+  "description": "2-3 sentence compelling narrative about this item — what makes it notable, rare, or desirable. Be specific and interesting.",
+  "marketTrend": "up|down|stable",
+  "trendNote": "Brief note on why the market is trending this way",
+  "hotPlatforms": ["eBay", "StockX", "Facebook Marketplace"],
+  "sellingTip": "One specific actionable tip to maximize resale value",
+  "localMarketNote": "Note about Tulsa/Oklahoma resale market for this type of item",
+  "redFlags": "Any issues that could affect value (damage, missing parts, fakes)",
+  "errorMessage": ""
+}
+
+If you cannot identify the item, set identified: false and explain in errorMessage. Be specific with dollar amounts. Never give vague ranges — commit to numbers.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{
+          role: 'user',
+          content: [{
+            type: 'image',
+            source: { type: 'base64', media_type: mediaType, data: base64 }
+          }, {
+            type: 'text',
+            text: 'Appraise this item for resale. Give me the full JSON report.'
+          }]
+        }]
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error?.message || 'API error ' + response.status);
+    }
+
+    const data = await response.json();
+    const raw = data.content.find(b => b.type === 'text')?.text || '';
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const result = JSON.parse(clean);
+
+    if (!result.identified) {
+      document.getElementById('errorDetail').textContent = result.errorMessage || 'Could not identify item.';
+      setState('error');
+      return;
+    }
+
+    renderResults(result);
+
+  } catch(e) {
+    document.getElementById('errorDetail').textContent = e.message;
+    setState('error');
+  }
+}
+
+function formatMoney(n) {
+  if (!n && n !== 0) return '$—';
+  return '$' + Math.round(n).toLocaleString();
+}
+
+function trendEmoji(t) {
+  if (t === 'up') return '📈';
+  if (t === 'down') return '📉';
+  return '➡️';
+}
+
+function renderResults(r) {
+  const html = `
+    <div class="item-header">
+      <div class="item-name">${r.itemName}</div>
+      <div style="font-size:12px;color:var(--muted)">${r.category} &nbsp;·&nbsp; ${r.condition}</div>
+      <div class="confidence-bar">
+        <span class="confidence-label">ID Confidence</span>
+        <div class="bar-track"><div class="bar-fill" id="confBar" style="width:0%"></div></div>
+        <span class="confidence-pct">${r.confidenceScore}%</span>
+      </div>
+    </div>
+    <div class="value-grid">
+      <div class="value-card featured">
+        <div class="card-label">Estimated Market Value</div>
+        <div class="card-value">${formatMoney(r.valueRange?.mid)}</div>
+        <div class="card-sub">Range: ${formatMoney(r.valueRange?.low)} – ${formatMoney(r.valueRange?.high)}</div>
+      </div>
+      <div class="value-card">
+        <div class="card-label">Condition Score</div>
+        <div class="card-value" style="font-size:28px">${r.conditionScore}<span style="font-size:14px;color:var(--muted)">/100</span></div>
+        <div class="card-sub">${r.condition}</div>
+      </div>
+      <div class="value-card">
+        <div class="card-label">Market Trend</div>
+        <div class="card-value" style="font-size:24px">${trendEmoji(r.marketTrend)} ${r.marketTrend?.toUpperCase()}</div>
+        <div class="card-sub">${r.trendNote || ''}</div>
+      </div>
+    </div>
+    <div class="desc-block">${r.description}</div>
+    <div class="panel-label" style="margin-top:4px">Market Intelligence</div>
+    <div class="intel-section">
+      ${r.recentSale ? `<div class="intel-item"><div class="intel-icon">🔨</div><div class="intel-text"><strong>Recent Sale:</strong> ${r.recentSale}</div></div>` : ''}
+      ${r.sellingTip ? `<div class="intel-item"><div class="intel-icon">💡</div><div class="intel-text"><strong>Seller Tip:</strong> ${r.sellingTip}</div></div>` : ''}
+      ${r.localMarketNote ? `<div class="intel-item"><div class="intel-icon">📍</div><div class="intel-text"><strong>Tulsa Market:</strong> ${r.localMarketNote}</div></div>` : ''}
+      ${r.redFlags ? `<div class="intel-item"><div class="intel-icon">⚠️</div><div class="intel-text"><strong>Watch Out:</strong> ${r.redFlags}</div></div>` : ''}
+    </div>
+    ${r.hotPlatforms?.length ? `
+    <div class="panel-label">Best Platforms to Sell</div>
+    <div class="platforms">${r.hotPlatforms.map(p => `<div class="platform-tag">${p}</div>`).join('')}</div>` : ''}
+    <p class="disclaimer">⚡ Powered by Claude Vision AI. Values are estimates and may vary. Verify on active listing platforms before selling.</p>
+    <button class="btn" onclick="resetAppraisal()" style="margin-top:8px">🔄 Appraise Another Item</button>
+  `;
+
+  document.getElementById('resultsArea').innerHTML = html;
+  setState('results');
+  setTimeout(() => {
+    const bar = document.getElementById('confBar');
+    if (bar) bar.style.width = r.confidenceScore + '%';
+  }, 100);
+}
+
+function resetAppraisal() {
+  capturedDataURL = null;
+  document.getElementById('capturedImage').style.display = 'none';
+  document.getElementById('fileInput').value = '';
+  if (!cameraActive) {
+    document.getElementById('cameraIdle').style.display = 'flex';
+    document.getElementById('captureBtn').disabled = true;
+  }
+  setState('idle');
+}
+
+const wrap = document.getElementById('cameraWrap');
+wrap.addEventListener('dragover', e => e.preventDefault());
+wrap.addEventListener('drop', e => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file?.type.startsWith('image/')) {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      capturedDataURL = ev.target.result;
+      const img = document.getElementById('capturedImage');
+      img.src = capturedDataURL;
+      img.style.display = 'block';
+      document.getElementById('cameraIdle').style.display = 'none';
+      document.getElementById('captureBtn').disabled = false;
+      runAppraisal(capturedDataURL);
+    };
+    reader.readAsDataURL(file);
+  }
+});
+</script>
+</body>
+</html>
