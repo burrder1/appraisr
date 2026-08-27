@@ -2,1303 +2,354 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>APPRAISR</title>
-
+<link rel="apple-touch-icon" href="icon.svg">
 <style>
-*{box-sizing:border-box}
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Bebas+Neue&family=Share+Tech+Mono&family=UnifrakturMaguntia&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;1,400;1,700&display=swap');
+
+:root {
+  --bg: #0a0605;
+  --paper: #1c1410;
+  --paper2: #141008;
+  --torn: #2a1e14;
+  --border: #2e1e14;
+  --border2: #3e2a1a;
+  --red: #aa0e0e;
+  --red-bright: #d41212;
+  --red-dim: #5e0808;
+  --cream: #d4b890;
+  --cream-dim: #7a6248;
+  --cream-dark: #3a2818;
+  --yellow: #b88010;
+  --text: #c4a07a;
+  --muted: #4a3020;
+  --danger: #d41212;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Special Elite', cursive;
+  min-height: 100vh; min-height: 100dvh;
+  display: flex; flex-direction: column;
+  overflow-x: hidden;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none; z-index: 0;
+}
+
+.key-gate {
+  position: fixed; inset: 0; background: rgba(5,3,2,0.97);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 500; padding: 20px;
+}
+.key-gate.hidden { display: none; }
+
+.key-box {
+  background: var(--paper);
+  border: 1px solid var(--border2);
+  border-top: 4px solid var(--red);
+  padding: 30px 28px; max-width: 460px; width: 100%;
+  display: flex; flex-direction: column; gap: 18px;
+  position: relative;
+  transform: rotate(-0.3deg);
+}
+.key-box::before {
+  content: '';
+  position: absolute; top: -8px; left: 30px;
+  width: 50px; height: 14px;
+  background: rgba(212,184,144,0.15);
+  border: 1px solid rgba(212,184,144,0.1);
+  transform: rotate(-1deg);
+}
+.key-box::after {
+  content: '';
+  position: absolute; top: -6px; right: 40px;
+  width: 36px; height: 10px;
+  background: rgba(212,184,144,0.1);
+  border: 1px solid rgba(212,184,144,0.07);
+  transform: rotate(2deg);
+}
+.key-box h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px; letter-spacing: 5px; color: var(--cream);
+}
+.key-box h2 em { font-style: normal; color: var(--red); }
+.key-box p { font-size: 13px; color: var(--cream-dim); line-height: 1.7; font-family: 'Special Elite', cursive; }
+.key-box a { color: var(--red); border-bottom: 1px solid var(--red-dim); text-decoration: none; }
+
+.key-input {
+  width: 100%; background: var(--paper2);
+  border: 1px solid var(--border2); border-left: 3px solid var(--red-dim);
+  color: var(--cream); font-family: 'Share Tech Mono', monospace;
+  font-size: 12px; padding: 13px 12px; outline: none; letter-spacing: 1px;
+}
+.key-input:focus { border-left-color: var(--red); }
+.key-input::placeholder { color: var(--muted); }
+
+.key-save {
+  width: 100%; padding: 14px;
+  background: var(--red); color: #fff; border: none;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px; letter-spacing: 8px; cursor: pointer;
+  transition: background 0.15s;
+  text-shadow: 1px 0 0 rgba(0,0,0,0.4);
+}
+.key-save:active { background: var(--red-bright); }
+.key-note { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--muted); }
+.key-error { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--red-bright); display: none; }
+.key-error.show { display: block; }
 
-:root{
-  --black:#0b0b0b;
-  --cream:#f4ead2;
-  --red:#d71920;
-  --darkred:#8f1116;
-  --gray:#1b1b1b;
+.header-red-bar {
+  height: 4px;
+  background: var(--red);
+  clip-path: polygon(0 0, 100% 0, 100% 60%, 99.5% 100%, 99% 60%, 98% 100%, 0 100%);
 }
 
-html,body{
-  margin:0;
-  min-height:100%;
-  background:var(--black);
-  color:var(--cream);
-  font-family:Arial,Helvetica,sans-serif;
+header {
+  border-bottom: 1px solid var(--border2);
+  flex-shrink: 0; position: relative; z-index: 1;
+  background: linear-gradient(180deg, rgba(30,16,8,1) 0%, rgba(20,10,5,1) 100%);
 }
 
-body{
-  overflow-x:hidden;
+.header-inner {
+  padding: 10px 20px 14px;
+  display: flex; align-items: flex-end; gap: 14px;
 }
 
-button,
-input{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
-}
-
-.app{
-  min-height:100vh;
-  background:
-    radial-gradient(circle at 20% 20%,rgba(255,255,255,.035),transparent 25%),
-    radial-gradient(circle at 80% 70%,rgba(215,25,32,.04),transparent 30%),
-    var(--black);
-}
-
-/* HEADER */
-
-header{
-  padding:22px 20px 16px;
-  border-bottom:3px solid var(--cream);
-  position:relative;
-}
-
-.logo{
-  font-size:clamp(42px,10vw,76px);
-  line-height:.8;
-  font-weight:1000;
-  letter-spacing:-6px;
-  transform:rotate(-2deg);
-  display:inline-block;
-  text-shadow:4px 4px 0 var(--darkred);
-}
-
-.logo .ai{
-  color:var(--red);
-}
-
-.tagline{
-  margin-top:14px;
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:3px;
-  text-transform:uppercase;
-}
-
-/* MAIN */
-
-main{
-  width:min(1100px,94%);
-  margin:0 auto;
-  padding:28px 0 60px;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:24px;
-}
-
-.panel{
-  background:var(--cream);
-  color:var(--black);
-  border:4px solid var(--black);
-  outline:3px solid var(--cream);
-  box-shadow:10px 10px 0 var(--red);
-  padding:18px;
-  position:relative;
-}
-
-.panel-title{
-  font-size:14px;
-  font-weight:1000;
-  letter-spacing:2px;
-  margin-bottom:14px;
-  text-transform:uppercase;
-}
-
-/* CAMERA */
-
-.camera-wrap{
-  position:relative;
-  background:#111;
-  aspect-ratio:4/3;
-  overflow:hidden;
-  border:4px solid var(--black);
-}
-
-#videoFeed,
-#capturedImage{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:none;
-}
-
-#cameraIdle{
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  padding:30px;
-  color:var(--cream);
-}
-
-.idle-inner{
-  max-width:280px;
-}
-
-.idle-icon{
-  font-size:58px;
-  margin-bottom:10px;
-}
-
-.idle-text{
-  font-size:18px;
-  font-weight:900;
-  text-transform:uppercase;
-}
-
-.crosshair{
-  position:absolute;
-  inset:12%;
-  border:2px solid rgba(244,234,210,.7);
-  pointer-events:none;
-  display:none;
-}
-
-.crosshair.active{
-  display:block;
-}
-
-.crosshair:before,
-.crosshair:after{
-  content:"";
-  position:absolute;
-  background:var(--cream);
-}
-
-.crosshair:before{
-  width:100%;
-  height:1px;
-  top:50%;
-  left:0;
-}
-
-.crosshair:after{
-  width:1px;
-  height:100%;
-  top:0;
-  left:50%;
-}
-
-/* CONTROLS */
-
-.controls{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:14px;
-}
-
-.btn{
-  border:3px solid var(--black);
-  background:var(--black);
-  color:var(--cream);
-  padding:14px 12px;
-  font-weight:1000;
-  text-transform:uppercase;
-  letter-spacing:1px;
-  min-height:52px;
-}
-
-.btn:hover{
-  background:var(--red);
-}
-
-.btn:disabled{
-  opacity:.4;
-  cursor:not-allowed;
-}
-
-.btn.red{
-  background:var(--red);
-  color:white;
-}
-
-.btn.red:hover{
-  background:var(--darkred);
-}
-
-input[type=file]{
-  display:none;
-}
+.logo-block { flex: 1; }
 
-.hint{
-  margin-top:14px;
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 4px;
+  line-height: 1;
+  display: flex; align-items: baseline; gap: 0;
 }
 
-.hint label{
-  display:block;
-  font-size:11px;
-  font-weight:1000;
-  letter-spacing:1px;
-  text-transform:uppercase;
-  margin-bottom:6px;
+.logo-appr {
+  font-size: 40px; color: var(--cream);
+  text-shadow: -1px 0 0 rgba(212,184,144,0.15);
 }
 
-.hint input{
-  width:100%;
-  border:3px solid var(--black);
-  padding:13px;
-  background:white;
-  color:var(--black);
-  outline:none;
+.logo-ai {
+  font-size: 48px; color: var(--red);
+  position: relative; display: inline-block;
+  letter-spacing: -4px;
+  margin: 0 2px 0 1px;
+  text-shadow: 0 0 20px rgba(170,14,14,0.4), 1px 0 0 rgba(0,0,0,0.5);
 }
-
-.hint input:focus{
-  border-color:var(--red);
-}
-
-/* STATUS */
-
-.status{
-  margin-top:18px;
-  border-top:3px solid var(--black);
-  padding-top:14px;
-}
-
-.status-title{
-  font-size:12px;
-  font-weight:1000;
-  letter-spacing:2px;
-  text-transform:uppercase;
-}
-
-.steps{
-  margin-top:10px;
-  display:grid;
-  gap:6px;
-}
-
-.step{
-  font-size:12px;
-  font-weight:800;
-  opacity:.3;
-  padding:7px;
-  border-left:4px solid var(--black);
-}
-
-.step.active{
-  opacity:1;
-  border-left-color:var(--red);
-}
-
-/* RESULTS */
-
-.results{
-  min-height:100%;
-}
-
-.empty{
-  min-height:300px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  border:3px dashed #777;
-  padding:30px;
-  font-weight:900;
-  text-transform:uppercase;
-}
-
-.result-content{
-  display:none;
-}
-
-.item-name{
-  font-size:clamp(28px,5vw,48px);
-  font-weight:1000;
-  line-height:.95;
-  text-transform:uppercase;
-  letter-spacing:-2px;
-  margin-bottom:12px;
-}
-
-.category{
-  display:inline-block;
-  background:var(--black);
-  color:var(--cream);
-  padding:6px 9px;
-  font-size:10px;
-  font-weight:1000;
-  letter-spacing:1px;
-  text-transform:uppercase;
-}
-
-.description{
-  margin:18px 0;
-  font-size:15px;
-  line-height:1.45;
-  font-weight:700;
-}
-
-.value-box{
-  background:var(--black);
-  color:var(--cream);
-  padding:18px;
-  margin:16px 0;
-  border:3px solid var(--red);
-}
-
-.value-label{
-  font-size:10px;
-  font-weight:1000;
-  letter-spacing:2px;
-  color:#aaa;
-  text-transform:uppercase;
-}
-
-.value{
-  color:var(--red);
-  font-size:42px;
-  font-weight:1000;
-  line-height:1;
-  margin-top:5px;
+.logo-ai::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: -4px; right: -2px;
+  height: 2px;
+  background: var(--cream);
+  opacity: 0.7;
+  transform: translateY(-50%) rotate(-8deg);
 }
 
-.value-sub{
-  font-size:12px;
-  margin-top:7px;
+.logo-sr {
+  font-size: 40px; color: var(--cream);
+  text-shadow: 1px 0 0 rgba(212,184,144,0.1);
 }
 
-.stats{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
+.logo-tagline {
+  font-family: 'Special Elite', cursive;
+  font-size: 10px; color: var(--muted);
+  letter-spacing: 1px; margin-top: 5px;
+  display: block; transform: rotate(-0.5deg);
 }
 
-.stat{
-  border:3px solid var(--black);
-  padding:12px;
+.key-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; color: var(--muted);
+  cursor: pointer; padding: 6px 10px;
+  border: 1px solid var(--border); background: none;
+  letter-spacing: 2px; margin-bottom: 4px; transition: all 0.15s;
 }
-
-.stat-label{
-  font-size:9px;
-  font-weight:1000;
-  letter-spacing:1px;
-  text-transform:uppercase;
-}
-
-.stat-value{
-  font-size:24px;
-  font-weight:1000;
-  margin-top:4px;
-}
-
-.section{
-  margin-top:18px;
-  border-top:3px solid var(--black);
-  padding-top:12px;
-}
-
-.section-title{
-  font-size:11px;
-  font-weight:1000;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  margin-bottom:7px;
-}
-
-.section-text{
-  font-size:14px;
-  line-height:1.4;
-  font-weight:700;
-}
-
-.platforms{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-}
-
-.platform{
-  background:var(--red);
-  color:white;
-  padding:6px 8px;
-  font-size:10px;
-  font-weight:1000;
-  text-transform:uppercase;
-}
-
-.trend{
-  font-weight:1000;
-  text-transform:uppercase;
-}
-
-.error{
-  display:none;
-  background:var(--red);
-  color:white;
-  padding:18px;
-  border:4px solid var(--black);
-  font-weight:900;
-}
-
-.new-btn{
-  width:100%;
-  margin-top:20px;
-}
-
-/* LOADING */
-
-.loading{
-  display:none;
-}
-
-.loading-box{
-  text-align:center;
-  padding:35px 15px;
-}
-
-.spinner{
-  width:55px;
-  height:55px;
-  border:6px solid #333;
-  border-top-color:var(--red);
-  border-radius:50%;
-  animation:spin .8s linear infinite;
-  margin:0 auto 18px;
-}
-
-@keyframes spin{
-  to{transform:rotate(360deg)}
-}
-
-/* MOBILE */
-
-@media(max-width:760px){
-  .grid{
-    grid-template-columns:1fr;
-  }
-
-  main{
-    width:92%;
-  }
-
-  .panel{
-    box-shadow:6px 6px 0 var(--red);
-  }
-
-  .logo{
-    letter-spacing:-4px;
-  }
+< truncated lines 178-795 >
+  const v=document.getElementById('videoFeed');
+  v.srcObject=stream;v.style.display='block';
+  document.getElementById('cameraIdle').style.display='none';
+  document.getElementById('capturedImage').style.display='none';
+  document.getElementById('crosshair').classList.add('active');
+  cameraActive=true;
+  document.getElementById('cameraBtn').textContent='Stop';
+  document.getElementById('captureBtn').disabled=false;
+  document.getElementById('shutterBtn').disabled=false;
 }
-</style>
-</head>
-
-<body>
-
-<div class="app">
-
-<header>
-  <div class="logo">
-    APPR<span class="ai">AI</span>SR
-  </div>
-  <div class="tagline">
-    Know what it's worth before you sell it.
-  </div>
-</header>
-
-<main>
-
-<div class="grid">
-
-<!-- CAMERA PANEL -->
-
-<section class="panel" id="cameraPanel">
-
-  <div class="panel-title">01 / Capture Item</div>
-
-  <div class="camera-wrap" id="cameraWrap">
-
-    <video
-      id="videoFeed"
-      autoplay
-      playsinline
-      muted>
-    </video>
-
-    <img
-      id="capturedImage"
-      alt="Captured item">
-
-    <div id="cameraIdle">
-      <div class="idle-inner">
-        <div class="idle-icon">▣</div>
-        <div class="idle-text">
-          Camera ready
-        </div>
-      </div>
-    </div>
-
-    <div id="crosshair" class="crosshair"></div>
-
-  </div>
-
-  <div class="controls">
-
-    <button
-      class="btn red"
-      id="captureBtn"
-      type="button">
-      TAKE PHOTO
-    </button>
-
-    <button
-      class="btn"
-      id="uploadBtn"
-      type="button">
-      UPLOAD
-    </button>
-
-  </div>
-
-  <input
-    id="fileInput"
-    type="file"
-    accept="image/*"
-    capture="environment">
-
-  <div class="hint">
-    <label for="hintInput">
-      What do you think it is? (optional)
-    </label>
-
-    <input
-      id="hintInput"
-      type="text"
-      placeholder="Example: vintage Nikon camera">
-  </div>
-
-  <div class="status">
-
-    <div class="status-title">
-      Appraisal status
-    </div>
-
-    <div class="steps">
-
-      <div class="step" id="step1">
-        01 — Analyzing image
-      </div>
-
-      <div class="step" id="step2">
-        02 — Identifying item
-      </div>
-
-      <div class="step" id="step3">
-        03 — Estimating market value
-      </div>
-
-      <div class="step" id="step4">
-        04 — Building appraisal
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-<!-- RESULTS PANEL -->
-
-<section class="panel results">
-
-  <div class="panel-title">02 / Appraisal</div>
-
-  <div id="emptyState" class="empty">
-    Photograph an item to get its resale appraisal.
-  </div>
-
-  <div id="loadingState" class="loading">
-
-    <div class="loading-box">
-
-      <div class="spinner"></div>
-
-      <strong>
-        APPRAISR IS WORKING...
-      </strong>
-
-      <p>
-        Identifying the item and checking its resale potential.
-      </p>
-
-    </div>
-
-  </div>
-
-  <div id="errorState" class="error">
-
-    <div>
-      APPRAISAL FAILED
-    </div>
-
-    <div id="errorDetail" style="margin-top:8px;font-size:13px;"></div>
-
-  </div>
-
-  <div id="resultContent" class="result-content">
-
-    <div id="resultItemName" class="item-name"></div>
-
-    <div id="resultCategory" class="category"></div>
-
-    <div id="resultDescription" class="description"></div>
-
-    <div class="value-box">
-
-      <div class="value-label">
-        Estimated resale range
-      </div>
-
-      <div id="resultValue" class="value">
-        —
-      </div>
-
-      <div id="resultValueSub" class="value-sub">
-        —
-      </div>
-
-    </div>
-
-    <div class="stats">
-
-      <div class="stat">
-
-        <div class="stat-label">
-          Condition
-        </div>
-
-        <div id="resultCondition" class="stat-value">
-          —
-        </div>
 
-      </div>
-
-      <div class="stat">
-
-        <div class="stat-label">
-          Confidence
-        </div>
-
-        <div id="resultConfidence" class="stat-value">
-          —
-        </div>
-
-      </div>
-
-    </div>
-
-    <div class="section">
-
-      <div class="section-title">
-        Recent comparable
-      </div>
-
-      <div id="resultRecentSale" class="section-text">
-        —
-      </div>
-
-    </div>
-
-    <div class="section">
-
-      <div class="section-title">
-        Market trend
-      </div>
-
-      <div id="resultTrend" class="section-text trend">
-        —
-      </div>
-
-      <div id="resultTrendNote"
-           class="section-text"
-           style="margin-top:5px;">
-      </div>
-
-    </div>
-
-    <div class="section">
-
-      <div class="section-title">
-        Best platforms
-      </div>
-
-      <div id="resultPlatforms" class="platforms"></div>
-
-    </div>
-
-    <div class="section">
-
-      <div class="section-title">
-        Selling tip
-      </div>
-
-      <div id="resultSellingTip" class="section-text">
-        —
-      </div>
-
-    </div>
-
-    <div class="section">
-
-      <div class="section-title">
-        Local market
-      </div>
-
-      <div id="resultLocal" class="section-text">
-        —
-      </div>
-
-    </div>
-
-    <div class="section">
-
-      <div class="section-title">
-        Red flags
-      </div>
-
-      <div id="resultFlags" class="section-text">
-        —
-      </div>
-
-    </div>
-
-    <button
-      id="newAppraisalBtn"
-      class="btn red new-btn"
-      type="button">
-      SCAN ANOTHER ITEM
-    </button>
-
-  </div>
-
-</section>
-
-</div>
-
-</main>
-
-</div>
-
-<script>
-
-let stream = null;
-let cameraActive = false;
-let capturedDataURL = null;
-
-/* -------------------------
-   ELEMENTS
-------------------------- */
-
-const video = document.getElementById('videoFeed');
-const fileInput = document.getElementById('fileInput');
-const captureBtn = document.getElementById('captureBtn');
-const uploadBtn = document.getElementById('uploadBtn');
-const newAppraisalBtn = document.getElementById('newAppraisalBtn');
-
-const cameraIdle = document.getElementById('cameraIdle');
-const capturedImage = document.getElementById('capturedImage');
-const crosshair = document.getElementById('crosshair');
-
-const emptyState = document.getElementById('emptyState');
-const loadingState = document.getElementById('loadingState');
-const errorState = document.getElementById('errorState');
-const errorDetail = document.getElementById('errorDetail');
-const resultContent = document.getElementById('resultContent');
-
-const hintInput = document.getElementById('hintInput');
-
-/* -------------------------
-   CAMERA
-------------------------- */
-
-async function startCamera(){
-
-  try{
-
-    if(stream){
-      stream.getTracks().forEach(track => track.stop());
-      stream = null;
-    }
-
-    stream = await navigator.mediaDevices.getUserMedia({
-      video:{
-        facingMode:{ideal:'environment'},
-        width:{ideal:1920},
-        height:{ideal:1080}
-      },
-      audio:false
-    });
-
-    video.srcObject = stream;
-
-    await video.play();
-
-    cameraActive = true;
-
-    video.style.display = 'block';
-    cameraIdle.style.display = 'none';
-    capturedImage.style.display = 'none';
-
-    crosshair.classList.add('active');
-
-    captureBtn.disabled = false;
-
-  }catch(error){
-
-    console.error('Camera error:',error);
-
-    cameraActive = false;
-    captureBtn.disabled = true;
-
-    video.style.display = 'none';
-    cameraIdle.style.display = 'flex';
-
-    cameraIdle.innerHTML = `
-      <div class="idle-inner">
-        <div class="idle-icon">▣</div>
-        <div class="idle-text">
-          Camera unavailable
-        </div>
-        <div style="margin-top:10px;font-size:12px;">
-          Use UPLOAD instead.
-        </div>
-      </div>
-    `;
-
-  }
-
+function stopCamera(){
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
+  const v=document.getElementById('videoFeed');v.style.display='none';v.srcObject=null;
+  document.getElementById('cameraIdle').style.display='flex';
+  document.getElementById('crosshair').classList.remove('active');
+  cameraActive=false;
+  document.getElementById('cameraBtn').textContent='Camera';
+  document.getElementById('captureBtn').disabled=true;
+  document.getElementById('shutterBtn').disabled=true;
 }
-
-/* -------------------------
-   CAPTURE
-------------------------- */
 
 function captureAndAppraise(){
-
-  if(!cameraActive || !stream){
-    return;
+  const v=document.getElementById('videoFeed');const c=document.getElementById('snapCanvas');const img=document.getElementById('capturedImage');
+  if(cameraActive&&v.readyState>=2){
+    c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);
+    capturedDataURL=c.toDataURL('image/jpeg',0.92);
+    const flash=document.createElement('div');flash.className='flash';document.getElementById('cameraWrap').appendChild(flash);setTimeout(()=>flash.remove(),300);
+    img.src=capturedDataURL;img.style.display='block';v.style.display='none';
+    document.getElementById('scanBeam').classList.add('active');setTimeout(()=>document.getElementById('scanBeam').classList.remove('active'),1500);
   }
-
-  if(video.readyState < 2){
-    return;
-  }
-
-  const canvas = document.createElement('canvas');
-
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-
-  const ctx = canvas.getContext('2d');
-
-  ctx.drawImage(
-    video,
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  );
-
-  capturedDataURL = canvas.toDataURL(
-    'image/jpeg',
-    .88
-  );
-
-  capturedImage.src = capturedDataURL;
-
-  capturedImage.style.display = 'block';
-  video.style.display = 'none';
-
-  crosshair.classList.remove('active');
-
-  runAppraisal(capturedDataURL);
+  if(capturedDataURL){if(window.innerWidth<=700)setTimeout(()=>document.getElementById('rightPanel').scrollIntoView({behavior:'smooth'}),300);runAppraisal(capturedDataURL);}
 }
 
-/* -------------------------
-   UPLOAD
-------------------------- */
-
-function handleUpload(event){
-
-  const file = event.target.files[0];
-
-  // Important: allows the same image
-  // to be selected again later.
-  event.target.value = '';
-
-  if(!file){
-    return;
-  }
-
-  if(!file.type.startsWith('image/')){
-    showError('Please select an image file.');
-    return;
-  }
-
-  const reader = new FileReader();
-
-  reader.onload = function(e){
-
-    capturedDataURL = e.target.result;
-
-    capturedImage.src = capturedDataURL;
-    capturedImage.style.display = 'block';
-
-    video.style.display = 'none';
-    cameraIdle.style.display = 'none';
-    crosshair.classList.remove('active');
-
+function handleUpload(e){
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    capturedDataURL=ev.target.result;
+    const img=document.getElementById('capturedImage');img.src=capturedDataURL;img.style.display='block';
+    document.getElementById('cameraIdle').style.display='none';document.getElementById('videoFeed').style.display='none';
+    document.getElementById('captureBtn').disabled=false;document.getElementById('shutterBtn').disabled=false;
+    if(window.innerWidth<=700)setTimeout(()=>document.getElementById('rightPanel').scrollIntoView({behavior:'smooth'}),300);
     runAppraisal(capturedDataURL);
-
-  };
-
-  reader.onerror = function(){
-
-    showError('Could not read that image.');
-
-  };
-
-  reader.readAsDataURL(file);
+  };r.readAsDataURL(file);
 }
 
-/* -------------------------
-   STATE
-------------------------- */
-
-function setStep(number){
-
-  for(let i=1;i<=4;i++){
-
-    const step = document.getElementById('step'+i);
-
-    if(i <= number){
-      step.classList.add('active');
-    }else{
-      step.classList.remove('active');
-    }
-
-  }
-
+function setState(s){
+  document.getElementById('idleState').style.display=s==='idle'?'flex':'none';
+  document.getElementById('loadingState').classList.toggle('active',s==='loading');
+  document.getElementById('errorState').classList.toggle('active',s==='error');
+  document.getElementById('resultsArea').classList.toggle('active',s==='results');
 }
 
-function setState(state){
-
-  emptyState.style.display = 'none';
-  loadingState.style.display = 'none';
-  errorState.style.display = 'none';
-  resultContent.style.display = 'none';
-
-  if(state === 'idle'){
-    emptyState.style.display = 'flex';
-    setStep(0);
-  }
-
-  if(state === 'loading'){
-    loadingState.style.display = 'block';
-  }
-
-  if(state === 'error'){
-    errorState.style.display = 'block';
-  }
-
-  if(state === 'results'){
-    resultContent.style.display = 'block';
-  }
-
+function setStep(n){
+  for(let i=1;i<=4;i++){const el=document.getElementById('step'+i);el.classList.remove('active','done');if(i<n)el.classList.add('done');else if(i===n)el.classList.add('active');}
 }
-
-/* -------------------------
-   APPRAISAL
-------------------------- */
 
 async function runAppraisal(dataURL){
+  const apiKey=getKey();if(!apiKey){changeKey();return;}
+  setState('loading');setStep(1);
+  [0,1800,3200,4800].forEach((t,i)=>setTimeout(()=>setStep(i+1),t));
+  const base64=dataURL.split(',')[1];const mediaType=dataURL.split(';')[0].split(':')[1];
+  const hint=document.getElementById('hintInput').value.trim();
+  const sys=`You are APPRAISR, a no-bullshit expert resale appraiser. Identify items precisely — exact brand, model, variant, year. Give real market values. Be specific. Don't overclaim confidence. If the user provides a hint about what the item is, prioritize that heavily.
 
-  setState('loading');
-  setStep(1);
-
-  const base64 = dataURL.split(',')[1];
-  const mediaType =
-    dataURL.split(';')[0].split(':')[1];
-
-  const hint = hintInput.value.trim();
-
-  setTimeout(()=>setStep(2),700);
-  setTimeout(()=>setStep(3),1800);
-  setTimeout(()=>setStep(4),3000);
-
+JSON only, no markdown, no backticks:
+{"identified":true,"itemName":"Exact full name","category":"Category","condition":"Honest condition","conditionScore":85,"confidenceScore":90,"valueRange":{"low":45,"mid":72,"high":110},"recentSale":"Specific comp with platform and price","description":"2-3 sentences on what makes this notable. Be real.","marketTrend":"up|down|stable","trendNote":"Why","hotPlatforms":["eBay","StockX"],"sellingTip":"One specific tip","localMarketNote":"Tulsa/Oklahoma context","redFlags":"Real issues","errorMessage":""}
+If unidentifiable set identified:false.`;
+  const userMsg=hint?`The user says this item is: "${hint}". Prioritize this. Appraise it. JSON only.`:`Appraise this item. JSON only.`;
   try{
-
-    const response = await fetch('/api/appraise',{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{
-        'Content-Type':'application/json'
-      },
-      body:JSON.stringify({
-        image:base64,
-        mediaType:mediaType,
-        hint:hint
-      })
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:sys,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:mediaType,data:base64}},{type:'text',text:userMsg}]}]})
     });
-
-    let data;
-
-    try{
-      data = await response.json();
-    }catch{
-      throw new Error(
-        'The server returned an invalid response.'
-      );
-    }
-
-    if(!response.ok){
-      throw new Error(
-        data.error || `Server error ${response.status}`
-      );
-    }
-
-    if(!data.identified){
-
-      showError(
-        data.errorMessage ||
-        'APPRAISR could not identify the item.'
-      );
-
-      return;
-    }
-
-    renderResults(data);
-
-  }catch(error){
-
-    console.error(error);
-
-    showError(
-      error.message ||
-      'Something went wrong during appraisal.'
-    );
-
-  }
-
+    if(!res.ok){const e=await res.json();throw new Error(e.error?.message||'API error '+res.status);}
+    const data=await res.json();
+    const raw=data.content.find(b=>b.type==='text')?.text||'';
+    const result=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    if(!result.identified){document.getElementById('errorDetail').textContent=result.errorMessage||'Could not identify.';setState('error');return;}
+    renderResults(result);
+  }catch(e){document.getElementById('errorDetail').textContent=e.message;setState('error');}
 }
 
-/* -------------------------
-   RESULTS
-------------------------- */
-
-function money(value){
-
-  if(value === null || value === undefined || value === ''){
-    return '—';
-  }
-
-  const number = Number(value);
-
-  if(Number.isNaN(number)){
-    return String(value);
-  }
-
-  return '$' + Math.round(number).toLocaleString();
-
+function esc(s){
+  if(s===null||s===undefined)return'';
+  return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
+function fmt(n){return n?'$'+Math.round(n).toLocaleString():'$—';}
+function trendCls(t){return t==='up'?'trend-up':t==='down'?'trend-down':'trend-stable';}
+function trendLbl(t){return t==='up'?'↑ Rising':t==='down'?'↓ Falling':'→ Stable';}
 
-function renderResults(data){
-
-  document.getElementById('resultItemName').textContent =
-    data.itemName || 'Unknown item';
-
-  document.getElementById('resultCategory').textContent =
-    data.category || 'Uncategorized';
-
-  document.getElementById('resultDescription').textContent =
-    data.description || '';
-
-  const range = data.valueRange || {};
-
-  document.getElementById('resultValue').textContent =
-    `${money(range.low)} — ${money(range.high)}`;
-
-  document.getElementById('resultValueSub').textContent =
-    `Likely market value: ${money(range.mid)}`;
-
-  document.getElementById('resultCondition').textContent =
-    data.conditionScore !== undefined
-      ? `${data.conditionScore}/100`
-      : (data.condition || '—');
-
-  document.getElementById('resultConfidence').textContent =
-    data.confidenceScore !== undefined
-      ? `${data.confidenceScore}%`
-      : '—';
-
-  document.getElementById('resultRecentSale').textContent =
-    data.recentSale || 'No comparable supplied.';
-
-  document.getElementById('resultTrend').textContent =
-    data.marketTrend || 'STABLE';
-
-  document.getElementById('resultTrendNote').textContent =
-    data.trendNote || '';
-
-  document.getElementById('resultSellingTip').textContent =
-    data.sellingTip || '—';
-
-  document.getElementById('resultLocal').textContent =
-    data.localMarketNote || '—';
-
-  document.getElementById('resultFlags').textContent =
-    data.redFlags || 'None reported.';
-
-  const platforms =
-    document.getElementById('resultPlatforms');
-
-  platforms.innerHTML = '';
-
-  if(Array.isArray(data.hotPlatforms)){
-
-    data.hotPlatforms.forEach(platform => {
-
-      const tag = document.createElement('span');
-
-      tag.className = 'platform';
-
-      tag.textContent = platform;
-
-      platforms.appendChild(tag);
-
-    });
-
-  }
-
+function renderResults(r){
+  document.getElementById('resultsArea').innerHTML=`
+    <div class="item-header">
+      <div class="item-cat">${esc(r.category)}</div>
+      <div class="item-name">${esc(r.itemName)}</div>
+      <div class="item-cond">${esc(r.condition)}</div>
+      <div class="conf-bar">
+        <span class="conf-label">ID Confidence</span>
+        <div class="bar-track"><div class="bar-fill" id="confBar"></div></div>
+        <span class="conf-pct">${esc(r.confidenceScore)}%</span>
+      </div>
+    </div>
+    <div class="value-block">
+      <div class="value-eyebrow">estimated resale value</div>
+      <div class="value-number"><span class="cur">$</span>${Math.round(r.valueRange?.mid||0).toLocaleString()}</div>
+      <div class="value-range">low ${fmt(r.valueRange?.low)} &nbsp;—&nbsp; high ${fmt(r.valueRange?.high)}</div>
+    </div>
+    <div class="value-grid">
+      <div class="stat-card">
+        <div class="stat-label">Condition</div>
+        <div class="stat-val">${esc(r.conditionScore)}<span style="font-size:14px;color:var(--muted)">/100</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Market</div>
+        <div class="stat-val ${trendCls(r.marketTrend)}" style="font-size:18px;padding-top:4px">${trendLbl(r.marketTrend)}</div>
+        <div class="stat-sub">${esc(r.trendNote)}</div>
+      </div>
+    </div>
+    <div class="desc-block">${esc(r.description)}</div>
+    <div class="section-label">Intel</div>
+    <div class="intel-list">
+      ${r.recentSale?`<div class="intel-row r"><div class="intel-icon">🔨</div><div class="intel-body"><b>Recent Sale</b>${esc(r.recentSale)}</div></div>`:''}
+      ${r.sellingTip?`<div class="intel-row y"><div class="intel-icon">💡</div><div class="intel-body"><b>Seller Tip</b>${esc(r.sellingTip)}</div></div>`:''}
+      ${r.localMarketNote?`<div class="intel-row c"><div class="intel-icon">📍</div><div class="intel-body"><b>Tulsa Market</b>${esc(r.localMarketNote)}</div></div>`:''}
+      ${r.redFlags?`<div class="intel-row w"><div class="intel-icon">⚠</div><div class="intel-body"><b>Watch Out</b>${esc(r.redFlags)}</div></div>`:''}
+    </div>
+    ${r.hotPlatforms?.length?`<div class="section-label">Where To Sell</div><div class="plat-row">${r.hotPlatforms.map(p=>`<div class="plat-tag">${esc(p)}</div>`).join('')}</div>`:''}
+    <p class="fine-print">// ai estimates only. verify on active listings before selling.</p>
+    <button class="reset-btn" onclick="resetAppraisal()">scan another</button>
+  `;
   setState('results');
-
+  setTimeout(()=>{const b=document.getElementById('confBar');if(b)b.style.width=r.confidenceScore+'%';},100);
 }
 
-/* -------------------------
-   ERROR
-------------------------- */
-
-function showError(message){
-
-  errorDetail.textContent = message;
-
-  setState('error');
-
-}
-
-/* -------------------------
-   RESET / NEW APPRAISAL
-------------------------- */
-
-async function resetAppraisal(){
-
-  capturedDataURL = null;
-
-  capturedImage.src = '';
-  capturedImage.style.display = 'none';
-
-  hintInput.value = '';
-
-  errorDetail.textContent = '';
-
+function resetAppraisal(){
+  capturedDataURL=null;
+  const capturedImg=document.getElementById('capturedImage');
+  capturedImg.style.display='none';
+  capturedImg.src='';
+  document.getElementById('fileInput').value='';
+  document.getElementById('hintInput').value='';
+  if(cameraActive){
+    // camera is still live — bring the video feed back instead of leaving a blank box
+    document.getElementById('videoFeed').style.display='block';
+  }else{
+    document.getElementById('cameraIdle').style.display='flex';
+  }
+  document.getElementById('captureBtn').disabled=!cameraActive;
+  document.getElementById('shutterBtn').disabled=!cameraActive;
   setState('idle');
-
-  /*
-    Don't rely on the old camera state.
-    Always request a fresh stream.
-  */
-
-  if(stream){
-
-    stream.getTracks().forEach(track=>{
-      track.stop();
-    });
-
-    stream = null;
-
-  }
-
-  cameraActive = false;
-
-  video.srcObject = null;
-  video.style.display = 'none';
-
-  cameraIdle.style.display = 'flex';
-
-  crosshair.classList.remove('active');
-
-  captureBtn.disabled = true;
-
-  await startCamera();
-
-  window.scrollTo({
-    top:0,
-    behavior:'smooth'
-  });
-
+  if(window.innerWidth<=700)document.getElementById('cameraWrap').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-/* -------------------------
-   EVENTS
-------------------------- */
-
-captureBtn.addEventListener(
-  'click',
-  captureAndAppraise
-);
-
-uploadBtn.addEventListener(
-  'click',
-  ()=>{
-    fileInput.click();
+window.addEventListener('pagehide',()=>{if(stream)stream.getTracks().forEach(t=>t.stop());});
+document.addEventListener('visibilitychange',()=>{
+  // don't kill the camera on a quick tab-switch, but do release it if the page is backgrounded a while
+  if(document.hidden&&stream){
+    setTimeout(()=>{if(document.hidden&&stream){stream.getTracks().forEach(t=>t.stop());stream=null;}},15000);
   }
-);
+});
 
-fileInput.addEventListener(
-  'change',
-  handleUpload
-);
-
-newAppraisalBtn.addEventListener(
-  'click',
-  resetAppraisal
-);
-
-/*
-  If the browser suspends the page,
-  restart the camera when we return.
-*/
-
-document.addEventListener(
-  'visibilitychange',
-  async ()=>{
-
-    if(
-      document.visibilityState === 'visible' &&
-      !capturedDataURL
-    ){
-
-      if(!stream || !cameraActive){
-        await startCamera();
-      }
-
-    }
-
+const wrap=document.getElementById('cameraWrap');
+wrap.addEventListener('dragover',e=>e.preventDefault());
+wrap.addEventListener('drop',e=>{
+  e.preventDefault();const file=e.dataTransfer.files[0];
+  if(file?.type.startsWith('image/')){
+    const reader=new FileReader();
+    reader.onload=ev=>{capturedDataURL=ev.target.result;document.getElementById('capturedImage').src=capturedDataURL;document.getElementById('capturedImage').style.display='block';document.getElementById('cameraIdle').style.display='none';document.getElementById('captureBtn').disabled=false;runAppraisal(capturedDataURL);};
+    reader.readAsDataURL(file);
   }
-);
-
-/* -------------------------
-   START
-------------------------- */
-
-setState('idle');
-startCamera();
-
+});
 </script>
-
 </body>
 </html>
