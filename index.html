@@ -3,590 +3,710 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0605">
 <title>APPRAISR</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Special+Elite&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Bebas+Neue&family=Share+Tech+Mono&display=swap');
 
-:root{
-  --bg:#0a0605;
-  --paper:#1c1410;
-  --paper2:#141008;
-  --border:#3e2a1a;
-  --red:#aa0e0e;
-  --red-bright:#d41212;
-  --cream:#d4b890;
-  --muted:#5a402b;
-  --text:#c4a07a;
+:root {
+  --bg: #0a0605;
+  --paper: #1c1410;
+  --paper2: #141008;
+  --border: #2e1e14;
+  --border2: #3e2a1a;
+  --red: #aa0e0e;
+  --red-bright: #d41212;
+  --red-dim: #5e0808;
+  --cream: #d4b890;
+  --cream-dim: #7a6248;
+  --text: #c4a07a;
+  --muted: #4a3020;
 }
 
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  -webkit-tap-highlight-color:transparent;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:'Special Elite',cursive;
-  min-height:100vh;
-  overflow-x:hidden;
+html,
+body {
+  min-height: 100%;
 }
 
-body:before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:20;
-  background:
-    radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.65));
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Special Elite", cursive;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
 }
 
-button,input{
-  font:inherit;
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 40%,
+    rgba(0,0,0,.7) 100%
+  );
 }
 
-button{
-  cursor:pointer;
+button,
+input {
+  font: inherit;
 }
 
-/* HEADER */
-
-header{
-  border-bottom:1px solid var(--border);
-  background:linear-gradient(#1e1008,#140a05);
-  position:relative;
-  z-index:2;
+button {
+  cursor: pointer;
 }
 
-.red-bar{
-  height:4px;
-  background:var(--red);
+/* =========================
+   HEADER
+   ========================= */
+
+.header-red-bar {
+  height: 4px;
+  background: var(--red);
 }
 
-.header-inner{
-  padding:12px 20px 16px;
-  display:flex;
-  align-items:flex-end;
-  gap:15px;
+header {
+  background: linear-gradient(
+    180deg,
+    #1e1008 0%,
+    #140a05 100%
+  );
+  border-bottom: 1px solid var(--border2);
 }
 
-.logo{
-  font-family:'Bebas Neue',sans-serif;
-  letter-spacing:3px;
-  line-height:.9;
+.header-inner {
+  max-width: 1200px;
+  margin: auto;
+  padding: 12px 20px 16px;
+  display: flex;
+  align-items: flex-end;
 }
 
-.logo .appr,
-.logo .sr{
-  color:var(--cream);
-  font-size:42px;
+.logo {
+  font-family: "Bebas Neue", sans-serif;
+  letter-spacing: 4px;
+  line-height: 1;
 }
 
-.logo .ai{
-  color:var(--red);
-  font-size:50px;
-  letter-spacing:-3px;
-  position:relative;
+.logo-appr,
+.logo-sr {
+  color: var(--cream);
+  font-size: 44px;
 }
 
-.logo .ai:after{
-  content:"";
-  position:absolute;
-  left:-3px;
-  right:-2px;
-  top:50%;
-  height:2px;
-  background:var(--cream);
-  transform:rotate(-8deg);
+.logo-ai {
+  color: var(--red);
+  font-size: 52px;
+  letter-spacing: -4px;
+  position: relative;
 }
 
-.tagline{
-  color:var(--muted);
-  font-size:10px;
-  letter-spacing:1px;
-  margin-top:5px;
+.logo-ai::after {
+  content: "";
+  position: absolute;
+  left: -4px;
+  right: -2px;
+  top: 50%;
+  height: 2px;
+  background: var(--cream);
+  opacity: .7;
+  transform: rotate(-8deg);
 }
 
-/* LAYOUT */
-
-main{
-  position:relative;
-  z-index:1;
-  width:min(1100px,94%);
-  margin:auto;
-  padding:24px 0 60px;
+.logo-tagline {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 1px;
 }
 
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:20px;
+/* =========================
+   MAIN
+   ========================= */
+
+main {
+  max-width: 1200px;
+  width: 94%;
+  margin: auto;
+  padding: 24px 0 60px;
 }
 
-.panel{
-  background:var(--paper);
-  border:1px solid var(--border);
-  position:relative;
+.app-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
 }
 
-.panel-title{
-  color:var(--cream);
-  font-family:'Bebas Neue',sans-serif;
-  font-size:20px;
-  letter-spacing:3px;
-  padding:14px 16px;
-  border-bottom:1px solid var(--border);
+.panel {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  min-width: 0;
 }
 
-/* CAMERA */
+.panel-title {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--cream);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 21px;
+  letter-spacing: 3px;
+}
 
-.camera-wrap{
-  position:relative;
-  background:#050403;
-  aspect-ratio:4/3;
-  overflow:hidden;
-  margin:16px;
-  border:1px solid var(--border);
+/* =========================
+   CAMERA
+   ========================= */
+
+.camera-wrap {
+  position: relative;
+  margin: 16px;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #050403;
+  border: 1px solid var(--border);
 }
 
 #videoFeed,
-#capturedImage{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
+#capturedImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-#videoFeed{
-  display:none;
+#videoFeed {
+  display: none;
 }
 
-#capturedImage{
-  display:none;
+#capturedImage {
+  display: none;
 }
 
-#cameraIdle{
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  color:var(--muted);
+#cameraIdle {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
 }
 
-.idle-title{
-  color:var(--cream);
-  font-family:'Bebas Neue',sans-serif;
-  font-size:28px;
-  letter-spacing:3px;
+.idle-title {
+  color: var(--cream);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 30px;
+  letter-spacing: 4px;
 }
 
-.idle-sub{
-  margin-top:8px;
-  font-size:11px;
+.idle-sub {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
 }
 
-#crosshair{
-  position:absolute;
-  inset:10%;
-  border:1px solid rgba(212,184,144,.45);
-  display:none;
-  pointer-events:none;
+#crosshair {
+  display: none;
+  position: absolute;
+  inset: 10%;
+  border: 1px solid rgba(212,184,144,.45);
+  pointer-events: none;
 }
 
-#crosshair.active{
-  display:block;
+#crosshair.active {
+  display: block;
 }
 
-#crosshair:before,
-#crosshair:after{
-  content:"";
-  position:absolute;
-  background:rgba(212,184,144,.5);
+#crosshair::before,
+#crosshair::after {
+  content: "";
+  position: absolute;
+  background: rgba(212,184,144,.5);
 }
 
-#crosshair:before{
-  width:100%;
-  height:1px;
-  top:50%;
+#crosshair::before {
+  width: 100%;
+  height: 1px;
+  top: 50%;
 }
 
-#crosshair:after{
-  width:1px;
-  height:100%;
-  left:50%;
+#crosshair::after {
+  width: 1px;
+  height: 100%;
+  left: 50%;
 }
 
-.controls{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  padding:0 16px;
+.flash {
+  position: absolute;
+  inset: 0;
+  background: white;
+  opacity: .85;
+  pointer-events: none;
+  animation: flash .3s ease-out forwards;
 }
 
-.btn{
-  border:1px solid var(--border);
-  background:var(--paper2);
-  color:var(--cream);
-  padding:13px;
-  text-transform:uppercase;
-  font-family:'Bebas Neue',sans-serif;
-  font-size:18px;
-  letter-spacing:3px;
+@keyframes flash {
+  from { opacity: .85; }
+  to { opacity: 0; }
 }
 
-.btn.red{
-  background:var(--red);
-  color:white;
-  border-color:var(--red);
+#scanBeam {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: var(--red-bright);
+  box-shadow: 0 0 18px var(--red);
+  pointer-events: none;
 }
 
-.btn:disabled{
-  opacity:.35;
-  cursor:not-allowed;
+#scanBeam.active {
+  display: block;
+  animation: scan 1.4s linear forwards;
 }
 
-#fileInput{
-  display:none;
+@keyframes scan {
+  from { top: 0; }
+  to { top: 100%; }
 }
 
-.hint{
-  padding:16px;
+/* =========================
+   BUTTONS
+   ========================= */
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 0 16px;
 }
 
-.hint label{
-  display:block;
-  color:var(--muted);
-  font-size:10px;
-  letter-spacing:1px;
-  margin-bottom:7px;
+.btn {
+  padding: 13px 10px;
+  background: var(--paper2);
+  border: 1px solid var(--border2);
+  color: var(--cream);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 18px;
+  letter-spacing: 3px;
 }
 
-.hint input{
-  width:100%;
-  background:var(--paper2);
-  color:var(--cream);
-  border:1px solid var(--border);
-  border-left:3px solid var(--red-dim);
-  padding:12px;
-  outline:none;
+.btn.red {
+  background: var(--red);
+  border-color: var(--red);
+  color: white;
 }
 
-.hint input:focus{
-  border-color:var(--red);
+.btn:active {
+  background: var(--red-bright);
 }
 
-/* STATUS */
-
-.status{
-  border-top:1px solid var(--border);
-  padding:14px 16px 18px;
+.btn:disabled {
+  opacity: .35;
+  cursor: not-allowed;
 }
 
-.status-title{
-  font-family:'Bebas Neue',sans-serif;
-  letter-spacing:2px;
-  color:var(--cream);
+#fileInput {
+  display: none;
 }
 
-.steps{
-  margin-top:10px;
-  display:grid;
-  gap:5px;
+/* =========================
+   HINT
+   ========================= */
+
+.hint {
+  padding: 16px;
 }
 
-.step{
-  color:var(--muted);
-  font-family:'Share Tech Mono',monospace;
-  font-size:10px;
-  padding:6px;
-  border-left:2px solid var(--border);
+.hint label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-family: "Share Tech Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
 }
 
-.step.active{
-  color:var(--cream);
-  border-left-color:var(--red);
+#hintInput {
+  width: 100%;
+  padding: 12px;
+  background: var(--paper2);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--red-dim);
+  color: var(--cream);
+  outline: none;
 }
 
-.step.done{
-  color:var(--red);
+#hintInput::placeholder {
+  color: var(--muted);
 }
 
-/* RESULTS */
+/* =========================
+   STATUS
+   ========================= */
 
-#resultsArea{
-  min-height:500px;
+.status {
+  padding: 14px 16px 18px;
+  border-top: 1px solid var(--border);
 }
 
-#idleState{
-  min-height:500px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  padding:30px;
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.7;
+.status-title {
+  color: var(--cream);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 17px;
+  letter-spacing: 3px;
+}
+
+.steps {
+  display: grid;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.step {
+  padding: 6px 8px;
+  border-left: 2px solid var(--border);
+  color: var(--muted);
+  font-family: "Share Tech Mono", monospace;
+  font-size: 10px;
+}
+
+.step.active {
+  color: var(--cream);
+  border-left-color: var(--red);
+}
+
+.step.done {
+  color: var(--red);
+}
+
+/* =========================
+   RIGHT PANEL
+   ========================= */
+
+#rightPanel {
+  min-height: 500px;
+}
+
+#idleState {
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 30px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
 }
 
 #loadingState,
-#errorState{
-  display:none;
+#errorState {
+  display: none;
 }
 
 #loadingState.active,
-#errorState.active{
-  display:block;
+#errorState.active {
+  display: block;
 }
 
-.loading{
-  min-height:500px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
+.loading {
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
-.spinner{
-  width:48px;
-  height:48px;
-  border:4px solid var(--border);
-  border-top-color:var(--red);
-  border-radius:50%;
-  animation:spin .8s linear infinite;
-  margin:0 auto 18px;
+.spinner {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 18px;
+  border: 4px solid var(--border);
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
 }
 
-@keyframes spin{
-  to{transform:rotate(360deg)}
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
-.error{
-  margin:16px;
-  padding:16px;
-  border:1px solid var(--red);
-  color:#ff6b6b;
-  font-family:'Share Tech Mono',monospace;
-  font-size:11px;
-  line-height:1.6;
+.loading-title {
+  color: var(--cream);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 24px;
+  letter-spacing: 4px;
 }
 
-.results-inner{
-  padding:16px;
+.loading-sub {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 10px;
 }
 
-.item-cat{
-  color:var(--red);
-  font-family:'Share Tech Mono',monospace;
-  font-size:10px;
-  letter-spacing:2px;
+.error-box {
+  margin: 16px;
+  padding: 16px;
+  border: 1px solid var(--red);
+  color: var(--red-bright);
+  font-family: "Share Tech Mono", monospace;
+  font-size: 11px;
+  line-height: 1.6;
 }
 
-.item-name{
-  color:var(--cream);
-  font-family:'Bebas Neue',sans-serif;
-  font-size:42px;
-  line-height:.95;
-  letter-spacing:2px;
-  margin:6px 0;
+/* =========================
+   RESULTS
+   ========================= */
+
+#resultsArea {
+  display: none;
+  padding: 16px;
 }
 
-.item-cond{
-  color:var(--muted);
-  font-size:11px;
+#resultsArea.active {
+  display: block;
 }
 
-.conf{
-  margin-top:12px;
+.item-cat {
+  color: var(--red);
+  font-family: "Share Tech Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
 }
 
-.conf-label{
-  font-family:'Share Tech Mono',monospace;
-  color:var(--muted);
-  font-size:9px;
+.item-name {
+  margin: 6px 0;
+  color: var(--cream);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 42px;
+  line-height: .95;
+  letter-spacing: 2px;
 }
 
-.bar{
-  height:5px;
-  background:var(--paper2);
-  margin-top:5px;
+.item-cond {
+  color: var(--muted);
+  font-size: 11px;
 }
 
-.bar-fill{
-  height:100%;
-  width:0;
-  background:var(--red);
-  transition:width .6s ease;
+.conf-bar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
 }
 
-.value-block{
-  margin-top:20px;
-  padding:18px;
-  background:var(--paper2);
-  border-top:3px solid var(--red);
+.conf-label,
+.conf-pct {
+  color: var(--muted);
+  font-family: "Share Tech Mono", monospace;
+  font-size: 9px;
 }
 
-.value-eyebrow{
-  color:var(--muted);
-  font-size:9px;
-  letter-spacing:2px;
-  text-transform:uppercase;
+.bar-track {
+  height: 5px;
+  background: var(--paper2);
 }
 
-.value-number{
-  color:var(--cream);
-  font-family:'Bebas Neue',sans-serif;
-  font-size:58px;
-  line-height:1;
-  margin:5px 0;
+.bar-fill {
+  width: 0;
+  height: 100%;
+  background: var(--red);
+  transition: width .7s ease;
 }
 
-.value-number .cur{
-  color:var(--red);
+.value-block {
+  margin-top: 20px;
+  padding: 18px;
+  background: var(--paper2);
+  border-top: 3px solid var(--red);
 }
 
-.value-range{
-  color:var(--muted);
-  font-family:'Share Tech Mono',monospace;
-  font-size:10px;
+.value-eyebrow {
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
-.value-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin-top:10px;
+.value-number {
+  margin: 5px 0;
+  color: var(--cream);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 58px;
+  line-height: 1;
 }
 
-.stat-card{
-  border:1px solid var(--border);
-  padding:12px;
+.value-number .cur {
+  color: var(--red);
 }
 
-.stat-label{
-  color:var(--muted);
-  font-size:9px;
-  letter-spacing:1px;
+.value-range {
+  color: var(--muted);
+  font-family: "Share Tech Mono", monospace;
+  font-size: 10px;
 }
 
-.stat-val{
-  color:var(--cream);
-  font-family:'Bebas Neue',sans-serif;
-  font-size:28px;
-  margin-top:4px;
+.value-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
 }
 
-.stat-sub{
-  color:var(--muted);
-  font-size:9px;
-  line-height:1.4;
-  margin-top:3px;
+.stat-card {
+  padding: 12px;
+  border: 1px solid var(--border);
 }
 
-.desc-block{
-  padding:16px 0;
-  color:var(--text);
-  font-size:12px;
-  line-height:1.7;
-  border-bottom:1px solid var(--border);
+.stat-label {
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 1px;
 }
 
-.section-label{
-  color:var(--cream);
-  font-family:'Bebas Neue',sans-serif;
-  letter-spacing:3px;
-  font-size:16px;
-  margin:18px 0 8px;
+.stat-val {
+  margin-top: 4px;
+  color: var(--cream);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 28px;
 }
 
-.intel-list{
-  display:grid;
-  gap:6px;
+.stat-sub {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.4;
 }
 
-.intel-row{
-  display:flex;
-  gap:10px;
-  padding:10px;
-  border:1px solid var(--border);
-  font-size:11px;
-  line-height:1.5;
+.trend-up {
+  color: #d4b890 !important;
 }
 
-.intel-icon{
-  width:25px;
+.trend-down {
+  color: var(--red-bright) !important;
 }
 
-.intel-body b{
-  display:block;
-  color:var(--cream);
-  font-size:9px;
-  letter-spacing:1px;
-  margin-bottom:3px;
+.trend-stable {
+  color: var(--cream) !important;
 }
 
-.plat-row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
+.desc-block {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.7;
 }
 
-.plat-tag{
-  border:1px solid var(--red);
-  color:var(--red);
-  padding:6px 8px;
-  font-family:'Share Tech Mono',monospace;
-  font-size:9px;
+.section-label {
+  margin: 18px 0 8px;
+  color: var(--cream);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 17px;
+  letter-spacing: 3px;
 }
 
-.fine-print{
-  color:var(--muted);
-  font-family:'Share Tech Mono',monospace;
-  font-size:8px;
-  margin-top:18px;
+.intel-list {
+  display: grid;
+  gap: 6px;
 }
 
-.reset-btn{
-  width:100%;
-  margin-top:18px;
-  padding:14px;
-  border:1px solid var(--red);
-  background:var(--red);
-  color:#fff;
-  font-family:'Bebas Neue',sans-serif;
-  font-size:20px;
-  letter-spacing:4px;
+.intel-row {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  font-size: 11px;
+  line-height: 1.5;
 }
 
-/* MOBILE */
+.intel-icon {
+  width: 25px;
+}
 
-@media(max-width:760px){
-  .grid{
-    grid-template-columns:1fr;
+.intel-body b {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--cream);
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.plat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.plat-tag {
+  padding: 6px 8px;
+  border: 1px solid var(--red);
+  color: var(--red);
+  font-family: "Share Tech Mono", monospace;
+  font-size: 9px;
+}
+
+.fine-print {
+  margin-top: 18px;
+  color: var(--muted);
+  font-family: "Share Tech Mono", monospace;
+  font-size: 8px;
+}
+
+.reset-btn {
+  width: 100%;
+  margin-top: 18px;
+  padding: 14px;
+  background: var(--red);
+  border: 1px solid var(--red);
+  color: white;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 20px;
+  letter-spacing: 4px;
+}
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 760px) {
+
+  .app-grid {
+    grid-template-columns: 1fr;
   }
 
-  main{
-    width:94%;
+  main {
+    width: 94%;
   }
 
-  .logo .appr,
-  .logo .sr{
-    font-size:36px;
+  .logo-appr,
+  .logo-sr {
+    font-size: 36px;
   }
 
-  .logo .ai{
-    font-size:44px;
+  .logo-ai {
+    font-size: 44px;
   }
 
-  .item-name{
-    font-size:36px;
+  .item-name {
+    font-size: 36px;
   }
 }
 </style>
@@ -594,15 +714,15 @@ main{
 
 <body>
 
-<div class="red-bar"></div>
+<div class="header-red-bar"></div>
 
 <header>
   <div class="header-inner">
     <div>
       <div class="logo">
-        <span class="appr">APPR</span><span class="ai">AI</span><span class="sr">SR</span>
+        <span class="logo-appr">APPR</span><span class="logo-ai">AI</span><span class="logo-sr">SR</span>
       </div>
-      <div class="tagline">
+      <div class="logo-tagline">
         RESALE VALUE / WITHOUT THE BULLSHIT
       </div>
     </div>
@@ -611,250 +731,466 @@ main{
 
 <main>
 
-<div class="grid">
+  <div class="app-grid">
 
-<section class="panel">
+    <!-- ================= CAMERA ================= -->
 
-  <div class="panel-title">01 / Capture Item</div>
+    <section class="panel">
 
-  <div class="camera-wrap" id="cameraWrap">
-
-    <video id="videoFeed" autoplay playsinline muted></video>
-
-    <img id="capturedImage" alt="Captured item">
-
-    <div id="cameraIdle">
-      <div>
-        <div class="idle-title">CAMERA READY</div>
-        <div class="idle-sub">Point at an item or upload a photo.</div>
-      </div>
-    </div>
-
-    <div id="crosshair"></div>
-
-  </div>
-
-  <canvas id="snapCanvas" style="display:none"></canvas>
-
-  <div class="controls">
-
-    <button
-      id="captureBtn"
-      class="btn red"
-      type="button"
-      disabled>
-      Capture
-    </button>
-
-    <button
-      id="uploadBtn"
-      class="btn"
-      type="button">
-      Upload
-    </button>
-
-  </div>
-
-  <input
-    id="fileInput"
-    type="file"
-    accept="image/*"
-    capture="environment">
-
-  <div class="hint">
-
-    <label for="hintInput">
-      OPTIONAL IDENTIFICATION HINT
-    </label>
-
-    <input
-      id="hintInput"
-      type="text"
-      placeholder="Example: vintage Nikon camera">
-
-  </div>
-
-  <div class="status">
-
-    <div class="status-title">
-      APPRAISAL STATUS
-    </div>
-
-    <div class="steps">
-
-      <div class="step" id="step1">
-        01 — ANALYZING IMAGE
+      <div class="panel-title">
+        01 / CAPTURE ITEM
       </div>
 
-      <div class="step" id="step2">
-        02 — IDENTIFYING ITEM
-      </div>
+      <div
+        id="cameraWrap"
+        class="camera-wrap"
+      >
 
-      <div class="step" id="step3">
-        03 — ESTIMATING VALUE
-      </div>
+        <video
+          id="videoFeed"
+          autoplay
+          playsinline
+          muted
+        ></video>
 
-      <div class="step" id="step4">
-        04 — BUILDING APPRAISAL
-      </div>
+        <img
+          id="capturedImage"
+          alt="Captured item"
+        >
 
-    </div>
+        <div id="cameraIdle">
+          <div>
+            <div class="idle-title">
+              CAMERA READY
+            </div>
 
-  </div>
-
-</section>
-
-<section class="panel">
-
-  <div class="panel-title">02 / Appraisal</div>
-
-  <div id="idleState">
-    Photograph something and APPRAISR will estimate<br>
-    what you can realistically get for it.
-  </div>
-
-  <div id="loadingState">
-
-    <div class="loading">
-
-      <div>
-        <div class="spinner"></div>
-
-        <div style="
-          color:var(--cream);
-          font-family:'Bebas Neue',sans-serif;
-          font-size:22px;
-          letter-spacing:3px;">
-          APPRAISING
+            <div class="idle-sub">
+              Point at an item or upload a photo.
+            </div>
+          </div>
         </div>
 
-        <div style="
-          color:var(--muted);
-          font-size:10px;
-          margin-top:8px;">
-          IDENTIFYING / VALUING / CHECKING
-        </div>
+        <div id="crosshair"></div>
+
+        <div id="scanBeam"></div>
+
       </div>
 
-    </div>
+      <canvas
+        id="snapCanvas"
+        style="display:none"
+      ></canvas>
+
+      <div class="controls">
+
+        <button
+          id="captureBtn"
+          class="btn red"
+          type="button"
+          disabled
+        >
+          CAPTURE
+        </button>
+
+        <button
+          id="uploadBtn"
+          class="btn"
+          type="button"
+        >
+          UPLOAD
+        </button>
+
+      </div>
+
+      <input
+        id="fileInput"
+        type="file"
+        accept="image/*"
+      >
+
+      <div class="hint">
+
+        <label for="hintInput">
+          OPTIONAL IDENTIFICATION HINT
+        </label>
+
+        <input
+          id="hintInput"
+          type="text"
+          placeholder="Example: vintage Nikon camera"
+        >
+
+      </div>
+
+      <div class="status">
+
+        <div class="status-title">
+          APPRAISAL STATUS
+        </div>
+
+        <div class="steps">
+
+          <div class="step" id="step1">
+            01 — ANALYZING IMAGE
+          </div>
+
+          <div class="step" id="step2">
+            02 — IDENTIFYING ITEM
+          </div>
+
+          <div class="step" id="step3">
+            03 — ESTIMATING VALUE
+          </div>
+
+          <div class="step" id="step4">
+            04 — BUILDING APPRAISAL
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ================= RESULTS ================= -->
+
+    <section
+      id="rightPanel"
+      class="panel"
+    >
+
+      <div class="panel-title">
+        02 / APPRAISAL
+      </div>
+
+      <div id="idleState">
+
+        Photograph something and APPRAISR will estimate
+        what you can realistically get for it.
+
+      </div>
+
+      <div id="loadingState">
+
+        <div class="loading">
+
+          <div>
+
+            <div class="spinner"></div>
+
+            <div class="loading-title">
+              APPRAISING
+            </div>
+
+            <div class="loading-sub">
+              IDENTIFYING / VALUING / CHECKING
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div id="errorState">
+
+        <div class="error-box">
+
+          <strong>APPRAISAL FAILED</strong>
+
+          <div
+            id="errorDetail"
+            style="margin-top:8px"
+          ></div>
+
+        </div>
+
+      </div>
+
+      <div id="resultsArea"></div>
+
+    </section>
 
   </div>
-
-  <div id="errorState">
-
-    <div class="error">
-      <strong>APPRAISAL FAILED</strong>
-      <div id="errorDetail" style="margin-top:8px"></div>
-    </div>
-
-  </div>
-
-  <div id="resultsArea"></div>
-
-</section>
-
-</div>
 
 </main>
 
 <script>
+"use strict";
+
+/*
+  APPRAISR FRONTEND
+  -----------------
+  No Anthropic key belongs in this file.
+
+  The browser sends the image to:
+      /api/appraise
+
+  The server is responsible for Anthropic.
+*/
+
+/* =========================
+   STATE
+   ========================= */
 
 let stream = null;
 let cameraActive = false;
 let capturedDataURL = null;
+let appraisalRequest = 0;
 
-const $ = id => document.getElementById(id);
+/* =========================
+   HELPERS
+   ========================= */
 
-/* CAMERA */
+function $(id) {
+  return document.getElementById(id);
+}
 
-async function startCamera(){
-
-  if(!navigator.mediaDevices ||
-     !navigator.mediaDevices.getUserMedia){
-
-    showCameraMessage(
-      'Camera unavailable. Use Upload instead.'
-    );
-
-    return;
+function escapeHTML(value) {
+  if (value === null || value === undefined) {
+    return "";
   }
 
-  try{
+  return String(value).replace(
+    /[&<>"']/g,
+    function (char) {
+      return {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[char];
+    }
+  );
+}
 
-    if(stream){
-      stream.getTracks().forEach(track => track.stop());
-      stream = null;
+function money(value) {
+  const number = Number(value);
+
+  if (!Number.isFinite(number)) {
+    return "$—";
+  }
+
+  return "$" + Math.round(number).toLocaleString();
+}
+
+/* =========================
+   STATE DISPLAY
+   ========================= */
+
+function setState(state) {
+
+  $("idleState").style.display =
+    state === "idle" ? "flex" : "none";
+
+  $("loadingState").classList.toggle(
+    "active",
+    state === "loading"
+  );
+
+  $("errorState").classList.toggle(
+    "active",
+    state === "error"
+  );
+
+  $("resultsArea").classList.toggle(
+    "active",
+    state === "results"
+  );
+}
+
+function setStep(number) {
+
+  for (let i = 1; i <= 4; i++) {
+
+    const element = $("step" + i);
+
+    if (!element) {
+      continue;
     }
 
-    stream = await navigator.mediaDevices.getUserMedia({
-      video:{
-        facingMode:{ideal:'environment'}
-      },
-      audio:false
-    });
+    element.classList.remove(
+      "active",
+      "done"
+    );
 
-    $('videoFeed').srcObject = stream;
+    if (i < number) {
+      element.classList.add("done");
+    }
 
-    $('videoFeed').style.display = 'block';
-    $('cameraIdle').style.display = 'none';
-    $('capturedImage').style.display = 'none';
-    $('crosshair').classList.add('active');
+    if (i === number) {
+      element.classList.add("active");
+    }
+  }
+}
+
+function showError(message) {
+
+  $("errorDetail").textContent =
+    message || "Something went wrong.";
+
+  setState("error");
+}
+
+/* =========================
+   CAMERA
+   ========================= */
+
+async function startCamera() {
+
+  /*
+    Always start from a clean stream.
+  */
+
+  stopCamera(false);
+
+  if (
+    !navigator.mediaDevices ||
+    !navigator.mediaDevices.getUserMedia
+  ) {
+
+    showCameraIdle(
+      "Camera unavailable here. Use UPLOAD instead."
+    );
+
+    return false;
+  }
+
+  try {
+
+    stream =
+      await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: {
+            ideal: "environment"
+          }
+        },
+        audio: false
+      });
+
+    const video = $("videoFeed");
+
+    video.srcObject = stream;
+    video.style.display = "block";
+
+    $("capturedImage").style.display = "none";
+    $("cameraIdle").style.display = "none";
+    $("crosshair").classList.add("active");
 
     cameraActive = true;
 
-    $('captureBtn').disabled = false;
+    $("captureBtn").disabled = false;
 
-  }catch(error){
+    return true;
 
-    console.error(error);
+  } catch (error) {
 
-    cameraActive = false;
-    stream = null;
-
-    $('videoFeed').style.display = 'none';
-    $('cameraIdle').style.display = 'flex';
-    $('captureBtn').disabled = true;
-
-    showCameraMessage(
-      'Camera permission unavailable. Use Upload instead.'
+    console.error(
+      "APPRAISR camera:",
+      error
     );
 
+    stream = null;
+    cameraActive = false;
+
+    $("captureBtn").disabled = true;
+
+    showCameraIdle(
+      "Camera permission unavailable. Use UPLOAD instead."
+    );
+
+    return false;
   }
 }
 
-function showCameraMessage(message){
+function stopCamera(showIdle = true) {
 
-  $('cameraIdle').innerHTML = `
-    <div>
-      <div class="idle-title">APPRAISR</div>
-      <div class="idle-sub">${escapeHTML(message)}</div>
-    </div>
-  `;
+  if (stream) {
 
+    stream
+      .getTracks()
+      .forEach(function (track) {
+        track.stop();
+      });
+
+  }
+
+  stream = null;
+  cameraActive = false;
+
+  const video = $("videoFeed");
+
+  if (video) {
+    video.pause();
+    video.srcObject = null;
+    video.style.display = "none";
+  }
+
+  $("crosshair").classList.remove("active");
+
+  $("captureBtn").disabled = true;
+
+  if (showIdle) {
+    showCameraIdle(
+      "Point at an item or upload a photo."
+    );
+  }
 }
 
-/* CAPTURE */
+function showCameraIdle(message) {
 
-function captureAndAppraise(){
+  $("cameraIdle").style.display = "flex";
 
-  if(!cameraActive || !stream){
+  $("cameraIdle").innerHTML = `
+    <div>
+      <div class="idle-title">
+        APPRAISR
+      </div>
+
+      <div class="idle-sub">
+        ${escapeHTML(message)}
+      </div>
+    </div>
+  `;
+}
+
+/* =========================
+   CAPTURE
+   ========================= */
+
+function captureAndAppraise() {
+
+  if (!cameraActive || !stream) {
+
     startCamera();
+
     return;
   }
 
-  const video = $('videoFeed');
-  const canvas = $('snapCanvas');
+  const video = $("videoFeed");
+  const canvas = $("snapCanvas");
 
-  if(video.readyState < 2){
+  if (
+    video.readyState < 2 ||
+    !video.videoWidth ||
+    !video.videoHeight
+  ) {
+
+    showError(
+      "Camera is not ready yet. Try again."
+    );
+
     return;
   }
 
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
 
-  const ctx = canvas.getContext('2d');
+  const context =
+    canvas.getContext("2d");
 
-  ctx.drawImage(
+  context.drawImage(
     video,
     0,
     0,
@@ -863,190 +1199,234 @@ function captureAndAppraise(){
   );
 
   capturedDataURL =
-    canvas.toDataURL('image/jpeg',0.90);
+    canvas.toDataURL(
+      "image/jpeg",
+      0.92
+    );
 
-  $('capturedImage').src = capturedDataURL;
-  $('capturedImage').style.display = 'block';
+  const image = $("capturedImage");
 
-  $('videoFeed').style.display = 'none';
+  image.src = capturedDataURL;
+  image.style.display = "block";
 
-  $('crosshair').classList.remove('active');
+  video.style.display = "none";
+
+  $("cameraIdle").style.display = "none";
+
+  $("crosshair").classList.remove(
+    "active"
+  );
+
+  const beam = $("scanBeam");
+
+  beam.classList.remove("active");
+
+  /*
+    Force animation restart.
+  */
+
+  void beam.offsetWidth;
+
+  beam.classList.add("active");
 
   runAppraisal(capturedDataURL);
 }
 
-/* UPLOAD */
+/* =========================
+   UPLOAD
+   ========================= */
 
-function handleUpload(event){
+function handleUpload(event) {
 
-  const file = event.target.files[0];
+  const file =
+    event.target.files &&
+    event.target.files[0];
 
-  event.target.value = '';
+  /*
+    Reset immediately so selecting
+    the same file again works.
+  */
 
-  if(!file){
+  event.target.value = "";
+
+  if (!file) {
     return;
   }
 
-  if(!file.type.startsWith('image/')){
-    showError('Please choose an image.');
+  if (!file.type.startsWith("image/")) {
+
+    showError(
+      "Please choose an image file."
+    );
+
     return;
   }
 
-  const reader = new FileReader();
+  const reader =
+    new FileReader();
 
-  reader.onload = function(e){
+  reader.onload = function (event) {
 
-    capturedDataURL = e.target.result;
+    capturedDataURL =
+      event.target.result;
 
-    $('capturedImage').src =
+    $("capturedImage").src =
       capturedDataURL;
 
-    $('capturedImage').style.display =
-      'block';
+    $("capturedImage").style.display =
+      "block";
 
-    $('videoFeed').style.display =
-      'none';
+    $("videoFeed").style.display =
+      "none";
 
-    $('cameraIdle').style.display =
-      'none';
+    $("cameraIdle").style.display =
+      "none";
 
-    $('crosshair').classList.remove('active');
+    $("crosshair")
+      .classList
+      .remove("active");
 
     runAppraisal(capturedDataURL);
-
   };
 
-  reader.onerror = function(){
+  reader.onerror = function () {
 
-    showError('Could not read that image.');
+    showError(
+      "Could not read that image."
+    );
 
   };
 
   reader.readAsDataURL(file);
 }
 
-/* STATE */
+/* =========================
+   APPRAISAL
+   ========================= */
 
-function setState(state){
+async function runAppraisal(dataURL) {
 
-  $('idleState').style.display =
-    state === 'idle' ? 'flex' : 'none';
+  const requestId =
+    ++appraisalRequest;
 
-  $('loadingState').classList.toggle(
-    'active',
-    state === 'loading'
-  );
-
-  $('errorState').classList.toggle(
-    'active',
-    state === 'error'
-  );
-
-  if(state !== 'results'){
-    $('resultsArea').innerHTML = '';
-  }
-
-}
-
-function setStep(number){
-
-  for(let i=1;i<=4;i++){
-
-    const el = $('step'+i);
-
-    el.classList.remove(
-      'active',
-      'done'
-    );
-
-    if(i < number){
-      el.classList.add('done');
-    }
-
-    if(i === number){
-      el.classList.add('active');
-    }
-
-  }
-
-}
-
-/* APPRAISAL */
-
-async function runAppraisal(dataURL){
-
-  setState('loading');
+  setState("loading");
   setStep(1);
 
-  setTimeout(()=>setStep(2),1200);
-  setTimeout(()=>setStep(3),2400);
-  setTimeout(()=>setStep(4),3600);
+  /*
+    Visual progress only.
+  */
 
-  try{
+  const timers = [
+    setTimeout(
+      () => setStep(2),
+      900
+    ),
 
-    const parts = dataURL.split(',');
+    setTimeout(
+      () => setStep(3),
+      1800
+    ),
 
-    if(parts.length < 2){
+    setTimeout(
+      () => setStep(4),
+      3000
+    )
+  ];
+
+  try {
+
+    if (
+      typeof dataURL !== "string" ||
+      !dataURL.includes(",")
+    ) {
+
       throw new Error(
-        'Invalid image data.'
+        "Invalid image data."
       );
     }
 
-    const base64 = parts[1];
+    const comma =
+      dataURL.indexOf(",");
+
+    const base64 =
+      dataURL.slice(comma + 1);
+
+    const header =
+      dataURL.slice(0, comma);
+
+    const mediaMatch =
+      header.match(
+        /^data:([^;]+);/
+      );
 
     const mediaType =
-      dataURL
-        .split(';')[0]
-        .split(':')[1] ||
-      'image/jpeg';
+      mediaMatch
+        ? mediaMatch[1]
+        : "image/jpeg";
 
     const hint =
-      $('hintInput').value.trim();
+      $("hintInput").value.trim();
 
-    const response = await fetch(
-      '/api/appraise',
-      {
-        method:'POST',
+    const response =
+      await fetch(
+        "/api/appraise",
+        {
+          method: "POST",
 
-        headers:{
-          'Content-Type':'application/json'
-        },
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
 
-        body:JSON.stringify({
-          image:base64,
-          mediaType:mediaType,
-          hint:hint
-        })
-      }
-    );
+          body: JSON.stringify({
+            image: base64,
+            mediaType,
+            hint
+          })
+        }
+      );
+
+    /*
+      If another scan has already started,
+      ignore this old response.
+    */
+
+    if (
+      requestId !== appraisalRequest
+    ) {
+      return;
+    }
 
     const text =
       await response.text();
 
     let data;
 
-    try{
+    try {
+
       data = JSON.parse(text);
-    }catch{
+
+    } catch (parseError) {
+
       throw new Error(
-        'Backend returned an invalid response.'
+        "The appraisal server returned an invalid response."
       );
     }
 
-    if(!response.ok){
+    if (!response.ok) {
 
       throw new Error(
         data.error ||
-        `Server error ${response.status}`
+        "API error " +
+        response.status
       );
-
     }
 
-    if(!data.identified){
+    if (!data.identified) {
 
       showError(
         data.errorMessage ||
-        'APPRAISR could not identify the item.'
+        "APPRAISR could not identify the item."
       );
 
       return;
@@ -1054,246 +1434,259 @@ async function runAppraisal(dataURL){
 
     renderResults(data);
 
-  }catch(error){
+  } catch (error) {
 
     console.error(
-      'APPRAISR:',
+      "APPRAISR:",
       error
     );
 
     showError(
       error.message ||
-      'Appraisal failed.'
+      "Appraisal failed."
     );
 
-  }
+  } finally {
 
+    timers.forEach(
+      clearTimeout
+    );
+  }
 }
 
-/* RESULTS */
+/* =========================
+   RESULTS
+   ========================= */
 
-function escapeHTML(value){
+function trendClass(trend) {
 
-  if(value === null ||
-     value === undefined){
-
-    return '';
-
+  if (trend === "up") {
+    return "trend-up";
   }
 
-  return String(value)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;')
-    .replace(/'/g,'&#039;');
+  if (trend === "down") {
+    return "trend-down";
+  }
 
+  return "trend-stable";
 }
 
-function money(value){
+function trendLabel(trend) {
 
-  if(value === null ||
-     value === undefined ||
-     value === ''){
-
-    return '—';
-
+  if (trend === "up") {
+    return "↑ RISING";
   }
 
-  const n = Number(value);
-
-  if(Number.isNaN(n)){
-    return escapeHTML(value);
+  if (trend === "down") {
+    return "↓ FALLING";
   }
 
-  return '$' +
-    Math.round(n).toLocaleString();
-
+  return "→ STABLE";
 }
 
-function renderResults(r){
+function renderResults(result) {
 
   const range =
-    r.valueRange || {};
+    result.valueRange || {};
 
   const platforms =
-    Array.isArray(r.hotPlatforms)
-      ? r.hotPlatforms
+    Array.isArray(
+      result.hotPlatforms
+    )
+      ? result.hotPlatforms
       : [];
 
-  const trend =
-    r.marketTrend === 'up'
-      ? '↑ RISING'
-      : r.marketTrend === 'down'
-        ? '↓ FALLING'
-        : '→ STABLE';
+  const confidence =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        Number(
+          result.confidenceScore
+        ) || 0
+      )
+    );
 
-  $('resultsArea').innerHTML = `
+  $("resultsArea").innerHTML = `
 
-    <div class="results-inner">
+    <div class="item-cat">
+      ${escapeHTML(result.category)}
+    </div>
 
-      <div class="item-cat">
-        ${escapeHTML(r.category || 'ITEM')}
+    <div class="item-name">
+      ${escapeHTML(result.itemName)}
+    </div>
+
+    <div class="item-cond">
+      ${escapeHTML(result.condition)}
+    </div>
+
+    <div class="conf-bar">
+
+      <span class="conf-label">
+        ID CONFIDENCE
+      </span>
+
+      <div class="bar-track">
+        <div
+          class="bar-fill"
+          id="confBar"
+        ></div>
       </div>
 
-      <div class="item-name">
-        ${escapeHTML(r.itemName || 'Unknown item')}
+      <span class="conf-pct">
+        ${confidence}%
+      </span>
+
+    </div>
+
+    <div class="value-block">
+
+      <div class="value-eyebrow">
+        ESTIMATED RESALE VALUE
       </div>
 
-      <div class="item-cond">
-        ${escapeHTML(r.condition || '')}
+      <div class="value-number">
+        <span class="cur">$</span>${Math.round(
+          Number(range.mid) || 0
+        ).toLocaleString()}
       </div>
 
-      <div class="conf">
-
-        <div class="conf-label">
-          ID CONFIDENCE —
-          ${escapeHTML(r.confidenceScore ?? '—')}%
-        </div>
-
-        <div class="bar">
-          <div
-            class="bar-fill"
-            style="width:${Math.max(
-              0,
-              Math.min(
-                100,
-                Number(r.confidenceScore) || 0
-              )
-            )}%">
-          </div>
-        </div>
-
+      <div class="value-range">
+        LOW ${money(range.low)}
+        &nbsp;—&nbsp;
+        HIGH ${money(range.high)}
       </div>
 
-      <div class="value-block">
+    </div>
 
-        <div class="value-eyebrow">
-          ESTIMATED RESALE VALUE
+    <div class="value-grid">
+
+      <div class="stat-card">
+
+        <div class="stat-label">
+          CONDITION
         </div>
 
-        <div class="value-number">
-          <span class="cur">$</span>${Math.round(
-            Number(range.mid) || 0
-          ).toLocaleString()}
-        </div>
-
-        <div class="value-range">
-          LOW ${money(range.low)}
-          &nbsp;—&nbsp;
-          HIGH ${money(range.high)}
-        </div>
-
-      </div>
-
-      <div class="value-grid">
-
-        <div class="stat-card">
-
-          <div class="stat-label">
-            CONDITION
-          </div>
-
-          <div class="stat-val">
-            ${escapeHTML(
-              r.conditionScore ?? '—'
-            )}/100
-          </div>
-
-        </div>
-
-        <div class="stat-card">
-
-          <div class="stat-label">
-            MARKET
-          </div>
-
-          <div class="stat-val">
-            ${trend}
-          </div>
-
-          <div class="stat-sub">
-            ${escapeHTML(
-              r.trendNote || ''
-            )}
-          </div>
-
+        <div class="stat-val">
+          ${escapeHTML(
+            result.conditionScore
+          )}
+          <span style="
+            font-size:14px;
+            color:var(--muted)
+          ">/100</span>
         </div>
 
       </div>
 
-      <div class="desc-block">
-        ${escapeHTML(
-          r.description || ''
-        )}
+      <div class="stat-card">
+
+        <div class="stat-label">
+          MARKET
+        </div>
+
+        <div class="stat-val ${trendClass(
+          result.marketTrend
+        )}" style="
+          font-size:18px;
+          padding-top:4px;
+        ">
+          ${trendLabel(
+            result.marketTrend
+          )}
+        </div>
+
+        <div class="stat-sub">
+          ${escapeHTML(
+            result.trendNote
+          )}
+        </div>
+
       </div>
 
-      <div class="section-label">
-        INTEL
-      </div>
+    </div>
 
-      <div class="intel-list">
+    <div class="desc-block">
+      ${escapeHTML(
+        result.description
+      )}
+    </div>
 
-        ${
-          r.recentSale
+    <div class="section-label">
+      INTEL
+    </div>
+
+    <div class="intel-list">
+
+      ${
+        result.recentSale
           ? `
             <div class="intel-row">
               <div class="intel-icon">🔨</div>
               <div class="intel-body">
                 <b>RECENT SALE</b>
-                ${escapeHTML(r.recentSale)}
+                ${escapeHTML(
+                  result.recentSale
+                )}
               </div>
             </div>
           `
-          : ''
-        }
+          : ""
+      }
 
-        ${
-          r.sellingTip
+      ${
+        result.sellingTip
           ? `
             <div class="intel-row">
               <div class="intel-icon">💡</div>
               <div class="intel-body">
                 <b>SELLER TIP</b>
-                ${escapeHTML(r.sellingTip)}
+                ${escapeHTML(
+                  result.sellingTip
+                )}
               </div>
             </div>
           `
-          : ''
-        }
+          : ""
+      }
 
-        ${
-          r.localMarketNote
+      ${
+        result.localMarketNote
           ? `
             <div class="intel-row">
               <div class="intel-icon">📍</div>
               <div class="intel-body">
-                <b>LOCAL MARKET</b>
-                ${escapeHTML(r.localMarketNote)}
+                <b>OKLAHOMA MARKET</b>
+                ${escapeHTML(
+                  result.localMarketNote
+                )}
               </div>
             </div>
           `
-          : ''
-        }
+          : ""
+      }
 
-        ${
-          r.redFlags
+      ${
+        result.redFlags
           ? `
             <div class="intel-row">
               <div class="intel-icon">⚠</div>
               <div class="intel-body">
                 <b>WATCH OUT</b>
-                ${escapeHTML(r.redFlags)}
+                ${escapeHTML(
+                  result.redFlags
+                )}
               </div>
             </div>
           `
-          : ''
-        }
+          : ""
+      }
 
-      </div>
+    </div>
 
-      ${
-        platforms.length
+    ${
+      platforms.length
         ? `
           <div class="section-label">
             WHERE TO SELL
@@ -1302,154 +1695,300 @@ function renderResults(r){
           <div class="plat-row">
 
             ${platforms.map(
-              p => `
-                <div class="plat-tag">
-                  ${escapeHTML(p)}
-                </div>
-              `
-            ).join('')}
+              function (platform) {
+                return `
+                  <div class="plat-tag">
+                    ${escapeHTML(platform)}
+                  </div>
+                `;
+              }
+            ).join("")}
 
           </div>
         `
-        : ''
-      }
+        : ""
+    }
 
-      <p class="fine-print">
-        // AI ESTIMATE ONLY. VERIFY ACTIVE SALES BEFORE SELLING.
-      </p>
+    <p class="fine-print">
+      // AI ESTIMATE ONLY. VERIFY ACTIVE SALES BEFORE SELLING.
+    </p>
 
-      <button
-        class="reset-btn"
-        id="resetBtn"
-        type="button">
-        SCAN ANOTHER
-      </button>
-
-    </div>
+    <button
+      id="resetBtn"
+      class="reset-btn"
+      type="button"
+    >
+      SCAN ANOTHER
+    </button>
   `;
 
-  setState('results');
+  setState("results");
 
-  $('resetBtn')
+  requestAnimationFrame(
+    function () {
+
+      const bar =
+        $("confBar");
+
+      if (bar) {
+        bar.style.width =
+          confidence + "%";
+      }
+
+    }
+  );
+
+  $("resetBtn")
     .addEventListener(
-      'click',
+      "click",
       resetAppraisal
     );
 
+  if (
+    window.innerWidth <= 760
+  ) {
+
+    setTimeout(
+      function () {
+
+        $("rightPanel")
+          .scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+
+      },
+      150
+    );
+  }
 }
 
-/* ERROR */
+/* =========================
+   RESET / SECOND SCAN
+   ========================= */
 
-function showError(message){
+async function resetAppraisal() {
 
-  $('errorDetail').textContent =
-    message;
+  /*
+    Invalidate any previous appraisal.
+  */
 
-  setState('error');
-
-}
-
-/* RESET */
-
-async function resetAppraisal(){
+  appraisalRequest++;
 
   capturedDataURL = null;
 
-  $('capturedImage').src = '';
-  $('capturedImage').style.display = 'none';
+  $("capturedImage").src = "";
+  $("capturedImage").style.display =
+    "none";
 
-  $('hintInput').value = '';
+  $("hintInput").value = "";
+  $("fileInput").value = "";
 
-  $('fileInput').value = '';
+  $("scanBeam")
+    .classList
+    .remove("active");
 
-  setState('idle');
+  setState("idle");
   setStep(0);
 
   /*
-    Always restart the camera from a clean state.
-    This fixes the second-scan state problem.
+    Fully restart the camera.
+
+    This is intentional.
+    We do not trust the previous
+    MediaStream after a scan.
   */
-
-  if(stream){
-
-    stream
-      .getTracks()
-      .forEach(track => track.stop());
-
-  }
-
-  stream = null;
-  cameraActive = false;
-
-  $('videoFeed').srcObject = null;
-  $('videoFeed').style.display = 'none';
-
-  $('crosshair')
-    .classList
-    .remove('active');
-
-  $('captureBtn').disabled = true;
 
   await startCamera();
 
-  window.scrollTo({
-    top:0,
-    behavior:'smooth'
-  });
+  if (
+    window.innerWidth <= 760
+  ) {
 
+    $("cameraWrap")
+      .scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+  }
 }
 
-/* EVENTS */
+/* =========================
+   DRAG / DROP
+   ========================= */
 
-$('captureBtn')
-  .addEventListener(
-    'click',
-    captureAndAppraise
+function setupDragDrop() {
+
+  const wrap =
+    $("cameraWrap");
+
+  if (!wrap) {
+    return;
+  }
+
+  wrap.addEventListener(
+    "dragover",
+    function (event) {
+      event.preventDefault();
+    }
   );
 
-$('uploadBtn')
-  .addEventListener(
-    'click',
-    () => $('fileInput').click()
-  );
+  wrap.addEventListener(
+    "drop",
+    function (event) {
 
-$('fileInput')
-  .addEventListener(
-    'change',
-    handleUpload
-  );
+      event.preventDefault();
 
-/*
-  IMPORTANT:
-  We do NOT automatically kill the camera
-  when the page becomes hidden.
-  That was contributing to the broken
-  second-scan state.
-*/
+      const file =
+        event.dataTransfer.files &&
+        event.dataTransfer.files[0];
+
+      if (!file) {
+        return;
+      }
+
+      if (
+        !file.type.startsWith(
+          "image/"
+        )
+      ) {
+        return;
+      }
+
+      const reader =
+        new FileReader();
+
+      reader.onload =
+        function (event) {
+
+          capturedDataURL =
+            event.target.result;
+
+          $("capturedImage").src =
+            capturedDataURL;
+
+          $("capturedImage")
+            .style.display = "block";
+
+          $("videoFeed")
+            .style.display = "none";
+
+          $("cameraIdle")
+            .style.display = "none";
+
+          $("crosshair")
+            .classList
+            .remove("active");
+
+          runAppraisal(
+            capturedDataURL
+          );
+        };
+
+      reader.readAsDataURL(file);
+    }
+  );
+}
+
+/* =========================
+   PAGE LIFECYCLE
+   ========================= */
 
 window.addEventListener(
-  'pagehide',
-  () => {
+  "pagehide",
+  function () {
 
-    if(stream){
+    if (stream) {
 
       stream
         .getTracks()
-        .forEach(track => track.stop());
-
-      stream = null;
-      cameraActive = false;
+        .forEach(function (track) {
+          track.stop();
+        });
 
     }
 
+    stream = null;
+    cameraActive = false;
   }
 );
 
-/* START */
+/*
+  IMPORTANT:
+  We intentionally do NOT stop the camera
+  on visibilitychange.
 
-setState('idle');
+  The previous implementation did that after
+  15 seconds and could leave the application
+  believing the camera was still active when
+  the actual MediaStream had been destroyed.
+*/
 
-startCamera();
+/* =========================
+   START APP
+   ========================= */
+
+function boot() {
+
+  try {
+
+    setState("idle");
+    setStep(0);
+
+    $("captureBtn")
+      .addEventListener(
+        "click",
+        captureAndAppraise
+      );
+
+    $("uploadBtn")
+      .addEventListener(
+        "click",
+        function () {
+          $("fileInput").click();
+        }
+      );
+
+    $("fileInput")
+      .addEventListener(
+        "change",
+        handleUpload
+      );
+
+    setupDragDrop();
+
+    /*
+      Camera failure must NEVER prevent
+      the rest of APPRAISR from loading.
+    */
+
+    startCamera();
+
+  } catch (error) {
+
+    console.error(
+      "APPRAISR BOOT ERROR:",
+      error
+    );
+
+    /*
+      Even if something unexpected happens,
+      show the interface instead of a blank page.
+    */
+
+    try {
+      setState("idle");
+      showCameraIdle(
+        "Camera unavailable. Use UPLOAD instead."
+      );
+    } catch (_) {
+      console.error(_);
+    }
+  }
+}
+
+boot();
 
 </script>
 
