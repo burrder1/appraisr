@@ -211,17 +211,47 @@ function captureAndAppraise(){
 }
 
 function handleUpload(e){
-  const file=e.target.files[0];if(!file)return;
+
+  const file=e.target.files[0];
+
+  // Reset immediately so the same file can be selected again
+  e.target.value='';
+
+  if(!file)return;
+
   const r=new FileReader();
+
   r.onload=ev=>{
+
     capturedDataURL=ev.target.result;
-    const img=document.getElementById('capturedImage');img.src=capturedDataURL;img.style.display='block';
-    document.getElementById('cameraIdle').style.display='none';document.getElementById('videoFeed').style.display='none';
-    document.getElementById('captureBtn').disabled=false;document.getElementById('shutterBtn').disabled=false;
-    if(window.innerWidth<=700)setTimeout(()=>document.getElementById('rightPanel').scrollIntoView({behavior:'smooth'}),300);
+
+    const img=document.getElementById('capturedImage');
+    img.src=capturedDataURL;
+    img.style.display='block';
+
+    document.getElementById('cameraIdle').style.display='none';
+    document.getElementById('videoFeed').style.display='none';
+
+    document.getElementById('captureBtn').disabled=false;
+    document.getElementById('shutterBtn').disabled=false;
+
+    if(window.innerWidth<=700){
+      setTimeout(
+        ()=>document.getElementById('rightPanel').scrollIntoView({
+          behavior:'smooth'
+        }),
+        300
+      );
+    }
+
     runAppraisal(capturedDataURL);
-  };r.readAsDataURL(file);
+
+  };
+
+  r.readAsDataURL(file);
 }
+
+
 
 function setState(s){
   document.getElementById('idleState').style.display=s==='idle'?'flex':'none';
