@@ -235,31 +235,56 @@ function setStep(n){
 }
 
 async function runAppraisal(dataURL){
-  const apiKey=getKey();if(!apiKey){changeKey();return;}
-  setState('loading');setStep(1);
-  [0,1800,3200,4800].forEach((t,i)=>setTimeout(()=>setStep(i+1),t));
-  const base64=dataURL.split(',')[1];const mediaType=dataURL.split(';')[0].split(':')[1];
-  const hint=document.getElementById('hintInput').value.trim();
-  const sys=`You are APPRAISR, a no-bullshit expert resale appraiser. Identify items precisely — exact brand, model, variant, year. Give real market values. Be specific. Don't overclaim confidence. If the user provides a hint about what the item is, prioritize that heavily.
+  setState('loading');
+  setStep(1);
 
-JSON only, no markdown, no backticks:
-{"identified":true,"itemName":"Exact full name","category":"Category","condition":"Honest condition","conditionScore":85,"confidenceScore":90,"valueRange":{"low":45,"mid":72,"high":110},"recentSale":"Specific comp with platform and price","description":"2-3 sentences on what makes this notable. Be real.","marketTrend":"up|down|stable","trendNote":"Why","hotPlatforms":["eBay","StockX"],"sellingTip":"One specific tip","localMarketNote":"Tulsa/Oklahoma context","redFlags":"Real issues","errorMessage":""}
-If unidentifiable set identified:false.`;
-  const userMsg=hint?`The user says this item is: "${hint}". Prioritize this. Appraise it. JSON only.`:`Appraise this item. JSON only.`;
-  try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:sys,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:mediaType,data:base64}},{type:'text',text:userMsg}]}]})
+  [0,1800,3200,4800].forEach((t,i)=>{
+    setTimeout(()=>setStep(i+1),t);
+  });
+
+  const base64 = dataURL.split(',')[1];
+  const mediaType = dataURL.split(';')[0].split(':')[1];
+  const hint = document.getElementById('hintInput').value.trim();
+
+  try {
+    const res = await fetch('/api/appraise', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        image: base64,
+        mediaType,
+        hint
+      })
     });
-    if(!res.ok){const e=await res.json();throw new Error(e.error?.message||'API error '+res.status);}
-    const data=await res.json();
-    const raw=data.content.find(b=>b.type==='text')?.text||'';
-    const result=JSON.parse(raw.replace(/```json|```/g,'').trim());
-    if(!result.identified){document.getElementById('errorDetail').textContent=result.errorMessage||'Could not identify.';setState('error');return;}
-    renderResults(result);
-  }catch(e){document.getElementById('errorDetail').textContent=e.message;setState('error');}
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'API error ' + res.status);
+    }
+
+    if (!data.identified) {
+      document.getElementById('errorDetail').textContent =
+        data.errorMessage || 'Could not identify.';
+      setState('error');
+      return;
+    }
+
+    renderResults(data);
+
+  } catch(e) {
+    console.error(e);
+
+    document.getElementById('errorDetail').textContent =
+      e.message || 'Appraisal failed.';
+
+    setState('error');
+  }
 }
+
+
 
 function esc(s){
   if(s===null||s===undefined)return'';
