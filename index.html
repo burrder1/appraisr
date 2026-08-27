@@ -4,407 +4,1454 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>APPRAISR</title>
-<link rel="apple-touch-icon" href="icon.svg">
+
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Bebas+Neue&family=Share+Tech+Mono&family=UnifrakturMaguntia&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Special+Elite&display=swap');
 
-:root {
-  --bg: #0a0605;
-  --paper: #1c1410;
-  --paper2: #141008;
-  --torn: #2a1e14;
-  --border: #2e1e14;
-  --border2: #3e2a1a;
-  --red: #aa0e0e;
-  --red-bright: #d41212;
-  --red-dim: #5e0808;
-  --cream: #d4b890;
-  --cream-dim: #7a6248;
-  --cream-dark: #3a2818;
-  --yellow: #b88010;
-  --text: #c4a07a;
-  --muted: #4a3020;
-  --danger: #d41212;
+:root{
+  --bg:#0a0605;
+  --paper:#1c1410;
+  --paper2:#141008;
+  --border:#3e2a1a;
+  --red:#aa0e0e;
+  --red-bright:#d41212;
+  --cream:#d4b890;
+  --muted:#5a402b;
+  --text:#c4a07a;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Special Elite', cursive;
-  min-height: 100vh; min-height: 100dvh;
-  display: flex; flex-direction: column;
-  overflow-x: hidden;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  -webkit-tap-highlight-color:transparent;
 }
 
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%);
-  pointer-events: none; z-index: 0;
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Special Elite',cursive;
+  min-height:100vh;
+  overflow-x:hidden;
 }
 
-.key-gate {
-  position: fixed; inset: 0; background: rgba(5,3,2,0.97);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 500; padding: 20px;
-}
-.key-gate.hidden { display: none; }
-
-.key-box {
-  background: var(--paper);
-  border: 1px solid var(--border2);
-  border-top: 4px solid var(--red);
-  padding: 30px 28px; max-width: 460px; width: 100%;
-  display: flex; flex-direction: column; gap: 18px;
-  position: relative;
-  transform: rotate(-0.3deg);
-}
-.key-box::before {
-  content: '';
-  position: absolute; top: -8px; left: 30px;
-  width: 50px; height: 14px;
-  background: rgba(212,184,144,0.15);
-  border: 1px solid rgba(212,184,144,0.1);
-  transform: rotate(-1deg);
-}
-.key-box::after {
-  content: '';
-  position: absolute; top: -6px; right: 40px;
-  width: 36px; height: 10px;
-  background: rgba(212,184,144,0.1);
-  border: 1px solid rgba(212,184,144,0.07);
-  transform: rotate(2deg);
-}
-.key-box h2 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 32px; letter-spacing: 5px; color: var(--cream);
-}
-.key-box h2 em { font-style: normal; color: var(--red); }
-.key-box p { font-size: 13px; color: var(--cream-dim); line-height: 1.7; font-family: 'Special Elite', cursive; }
-.key-box a { color: var(--red); border-bottom: 1px solid var(--red-dim); text-decoration: none; }
-
-.key-input {
-  width: 100%; background: var(--paper2);
-  border: 1px solid var(--border2); border-left: 3px solid var(--red-dim);
-  color: var(--cream); font-family: 'Share Tech Mono', monospace;
-  font-size: 12px; padding: 13px 12px; outline: none; letter-spacing: 1px;
-}
-.key-input:focus { border-left-color: var(--red); }
-.key-input::placeholder { color: var(--muted); }
-
-.key-save {
-  width: 100%; padding: 14px;
-  background: var(--red); color: #fff; border: none;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 22px; letter-spacing: 8px; cursor: pointer;
-  transition: background 0.15s;
-  text-shadow: 1px 0 0 rgba(0,0,0,0.4);
-}
-.key-save:active { background: var(--red-bright); }
-.key-note { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--muted); }
-.key-error { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--red-bright); display: none; }
-.key-error.show { display: block; }
-
-.header-red-bar {
-  height: 4px;
-  background: var(--red);
-  clip-path: polygon(0 0, 100% 0, 100% 60%, 99.5% 100%, 99% 60%, 98% 100%, 0 100%);
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:20;
+  background:
+    radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.65));
 }
 
-header {
-  border-bottom: 1px solid var(--border2);
-  flex-shrink: 0; position: relative; z-index: 1;
-  background: linear-gradient(180deg, rgba(30,16,8,1) 0%, rgba(20,10,5,1) 100%);
+button,input{
+  font:inherit;
 }
 
-.header-inner {
-  padding: 10px 20px 14px;
-  display: flex; align-items: flex-end; gap: 14px;
+button{
+  cursor:pointer;
 }
 
-.logo-block { flex: 1; }
+/* HEADER */
 
-.logo {
-  font-family: 'Bebas Neue', sans-serif;
-  letter-spacing: 4px;
-  line-height: 1;
-  display: flex; align-items: baseline; gap: 0;
-}
-
-.logo-appr {
-  font-size: 40px; color: var(--cream);
-  text-shadow: -1px 0 0 rgba(212,184,144,0.15);
+header{
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(#1e1008,#140a05);
+  position:relative;
+  z-index:2;
 }
 
-.logo-ai {
-  font-size: 48px; color: var(--red);
-  position: relative; display: inline-block;
-  letter-spacing: -4px;
-  margin: 0 2px 0 1px;
-  text-shadow: 0 0 20px rgba(170,14,14,0.4), 1px 0 0 rgba(0,0,0,0.5);
-}
-.logo-ai::after {
-  content: '';
-  position: absolute;
-  top: 50%; left: -4px; right: -2px;
-  height: 2px;
-  background: var(--cream);
-  opacity: 0.7;
-  transform: translateY(-50%) rotate(-8deg);
+.red-bar{
+  height:4px;
+  background:var(--red);
 }
 
-.logo-sr {
-  font-size: 40px; color: var(--cream);
-  text-shadow: 1px 0 0 rgba(212,184,144,0.1);
+.header-inner{
+  padding:12px 20px 16px;
+  display:flex;
+  align-items:flex-end;
+  gap:15px;
 }
 
-.logo-tagline {
-  font-family: 'Special Elite', cursive;
-  font-size: 10px; color: var(--muted);
-  letter-spacing: 1px; margin-top: 5px;
-  display: block; transform: rotate(-0.5deg);
+.logo{
+  font-family:'Bebas Neue',sans-serif;
+  letter-spacing:3px;
+  line-height:.9;
 }
 
-.key-btn {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 10px; color: var(--muted);
-  cursor: pointer; padding: 6px 10px;
-  border: 1px solid var(--border); background: none;
-  letter-spacing: 2px; margin-bottom: 4px; transition: all 0.15s;
-}
-< truncated lines 178-795 >
-  const v=document.getElementById('videoFeed');
-  v.srcObject=stream;v.style.display='block';
-  document.getElementById('cameraIdle').style.display='none';
-  document.getElementById('capturedImage').style.display='none';
-  document.getElementById('crosshair').classList.add('active');
-  cameraActive=true;
-  document.getElementById('cameraBtn').textContent='Stop';
-  document.getElementById('captureBtn').disabled=false;
-  document.getElementById('shutterBtn').disabled=false;
+.logo .appr,
+.logo .sr{
+  color:var(--cream);
+  font-size:42px;
 }
 
-function stopCamera(){
-  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
-  const v=document.getElementById('videoFeed');v.style.display='none';v.srcObject=null;
-  document.getElementById('cameraIdle').style.display='flex';
-  document.getElementById('crosshair').classList.remove('active');
-  cameraActive=false;
-  document.getElementById('cameraBtn').textContent='Camera';
-  document.getElementById('captureBtn').disabled=true;
-  document.getElementById('shutterBtn').disabled=true;
+.logo .ai{
+  color:var(--red);
+  font-size:50px;
+  letter-spacing:-3px;
+  position:relative;
 }
+
+.logo .ai:after{
+  content:"";
+  position:absolute;
+  left:-3px;
+  right:-2px;
+  top:50%;
+  height:2px;
+  background:var(--cream);
+  transform:rotate(-8deg);
+}
+
+.tagline{
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:1px;
+  margin-top:5px;
+}
+
+/* LAYOUT */
+
+main{
+  position:relative;
+  z-index:1;
+  width:min(1100px,94%);
+  margin:auto;
+  padding:24px 0 60px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.panel{
+  background:var(--paper);
+  border:1px solid var(--border);
+  position:relative;
+}
+
+.panel-title{
+  color:var(--cream);
+  font-family:'Bebas Neue',sans-serif;
+  font-size:20px;
+  letter-spacing:3px;
+  padding:14px 16px;
+  border-bottom:1px solid var(--border);
+}
+
+/* CAMERA */
+
+.camera-wrap{
+  position:relative;
+  background:#050403;
+  aspect-ratio:4/3;
+  overflow:hidden;
+  margin:16px;
+  border:1px solid var(--border);
+}
+
+#videoFeed,
+#capturedImage{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+#videoFeed{
+  display:none;
+}
+
+#capturedImage{
+  display:none;
+}
+
+#cameraIdle{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:var(--muted);
+}
+
+.idle-title{
+  color:var(--cream);
+  font-family:'Bebas Neue',sans-serif;
+  font-size:28px;
+  letter-spacing:3px;
+}
+
+.idle-sub{
+  margin-top:8px;
+  font-size:11px;
+}
+
+#crosshair{
+  position:absolute;
+  inset:10%;
+  border:1px solid rgba(212,184,144,.45);
+  display:none;
+  pointer-events:none;
+}
+
+#crosshair.active{
+  display:block;
+}
+
+#crosshair:before,
+#crosshair:after{
+  content:"";
+  position:absolute;
+  background:rgba(212,184,144,.5);
+}
+
+#crosshair:before{
+  width:100%;
+  height:1px;
+  top:50%;
+}
+
+#crosshair:after{
+  width:1px;
+  height:100%;
+  left:50%;
+}
+
+.controls{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  padding:0 16px;
+}
+
+.btn{
+  border:1px solid var(--border);
+  background:var(--paper2);
+  color:var(--cream);
+  padding:13px;
+  text-transform:uppercase;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:18px;
+  letter-spacing:3px;
+}
+
+.btn.red{
+  background:var(--red);
+  color:white;
+  border-color:var(--red);
+}
+
+.btn:disabled{
+  opacity:.35;
+  cursor:not-allowed;
+}
+
+#fileInput{
+  display:none;
+}
+
+.hint{
+  padding:16px;
+}
+
+.hint label{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:1px;
+  margin-bottom:7px;
+}
+
+.hint input{
+  width:100%;
+  background:var(--paper2);
+  color:var(--cream);
+  border:1px solid var(--border);
+  border-left:3px solid var(--red-dim);
+  padding:12px;
+  outline:none;
+}
+
+.hint input:focus{
+  border-color:var(--red);
+}
+
+/* STATUS */
+
+.status{
+  border-top:1px solid var(--border);
+  padding:14px 16px 18px;
+}
+
+.status-title{
+  font-family:'Bebas Neue',sans-serif;
+  letter-spacing:2px;
+  color:var(--cream);
+}
+
+.steps{
+  margin-top:10px;
+  display:grid;
+  gap:5px;
+}
+
+.step{
+  color:var(--muted);
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  padding:6px;
+  border-left:2px solid var(--border);
+}
+
+.step.active{
+  color:var(--cream);
+  border-left-color:var(--red);
+}
+
+.step.done{
+  color:var(--red);
+}
+
+/* RESULTS */
+
+#resultsArea{
+  min-height:500px;
+}
+
+#idleState{
+  min-height:500px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:30px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.7;
+}
+
+#loadingState,
+#errorState{
+  display:none;
+}
+
+#loadingState.active,
+#errorState.active{
+  display:block;
+}
+
+.loading{
+  min-height:500px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+
+.spinner{
+  width:48px;
+  height:48px;
+  border:4px solid var(--border);
+  border-top-color:var(--red);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  margin:0 auto 18px;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+.error{
+  margin:16px;
+  padding:16px;
+  border:1px solid var(--red);
+  color:#ff6b6b;
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;
+  line-height:1.6;
+}
+
+.results-inner{
+  padding:16px;
+}
+
+.item-cat{
+  color:var(--red);
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  letter-spacing:2px;
+}
+
+.item-name{
+  color:var(--cream);
+  font-family:'Bebas Neue',sans-serif;
+  font-size:42px;
+  line-height:.95;
+  letter-spacing:2px;
+  margin:6px 0;
+}
+
+.item-cond{
+  color:var(--muted);
+  font-size:11px;
+}
+
+.conf{
+  margin-top:12px;
+}
+
+.conf-label{
+  font-family:'Share Tech Mono',monospace;
+  color:var(--muted);
+  font-size:9px;
+}
+
+.bar{
+  height:5px;
+  background:var(--paper2);
+  margin-top:5px;
+}
+
+.bar-fill{
+  height:100%;
+  width:0;
+  background:var(--red);
+  transition:width .6s ease;
+}
+
+.value-block{
+  margin-top:20px;
+  padding:18px;
+  background:var(--paper2);
+  border-top:3px solid var(--red);
+}
+
+.value-eyebrow{
+  color:var(--muted);
+  font-size:9px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
+
+.value-number{
+  color:var(--cream);
+  font-family:'Bebas Neue',sans-serif;
+  font-size:58px;
+  line-height:1;
+  margin:5px 0;
+}
+
+.value-number .cur{
+  color:var(--red);
+}
+
+.value-range{
+  color:var(--muted);
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+}
+
+.value-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:10px;
+}
+
+.stat-card{
+  border:1px solid var(--border);
+  padding:12px;
+}
+
+.stat-label{
+  color:var(--muted);
+  font-size:9px;
+  letter-spacing:1px;
+}
+
+.stat-val{
+  color:var(--cream);
+  font-family:'Bebas Neue',sans-serif;
+  font-size:28px;
+  margin-top:4px;
+}
+
+.stat-sub{
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.4;
+  margin-top:3px;
+}
+
+.desc-block{
+  padding:16px 0;
+  color:var(--text);
+  font-size:12px;
+  line-height:1.7;
+  border-bottom:1px solid var(--border);
+}
+
+.section-label{
+  color:var(--cream);
+  font-family:'Bebas Neue',sans-serif;
+  letter-spacing:3px;
+  font-size:16px;
+  margin:18px 0 8px;
+}
+
+.intel-list{
+  display:grid;
+  gap:6px;
+}
+
+.intel-row{
+  display:flex;
+  gap:10px;
+  padding:10px;
+  border:1px solid var(--border);
+  font-size:11px;
+  line-height:1.5;
+}
+
+.intel-icon{
+  width:25px;
+}
+
+.intel-body b{
+  display:block;
+  color:var(--cream);
+  font-size:9px;
+  letter-spacing:1px;
+  margin-bottom:3px;
+}
+
+.plat-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.plat-tag{
+  border:1px solid var(--red);
+  color:var(--red);
+  padding:6px 8px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;
+}
+
+.fine-print{
+  color:var(--muted);
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;
+  margin-top:18px;
+}
+
+.reset-btn{
+  width:100%;
+  margin-top:18px;
+  padding:14px;
+  border:1px solid var(--red);
+  background:var(--red);
+  color:#fff;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:20px;
+  letter-spacing:4px;
+}
+
+/* MOBILE */
+
+@media(max-width:760px){
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  main{
+    width:94%;
+  }
+
+  .logo .appr,
+  .logo .sr{
+    font-size:36px;
+  }
+
+  .logo .ai{
+    font-size:44px;
+  }
+
+  .item-name{
+    font-size:36px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="red-bar"></div>
+
+<header>
+  <div class="header-inner">
+    <div>
+      <div class="logo">
+        <span class="appr">APPR</span><span class="ai">AI</span><span class="sr">SR</span>
+      </div>
+      <div class="tagline">
+        RESALE VALUE / WITHOUT THE BULLSHIT
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<div class="grid">
+
+<section class="panel">
+
+  <div class="panel-title">01 / Capture Item</div>
+
+  <div class="camera-wrap" id="cameraWrap">
+
+    <video id="videoFeed" autoplay playsinline muted></video>
+
+    <img id="capturedImage" alt="Captured item">
+
+    <div id="cameraIdle">
+      <div>
+        <div class="idle-title">CAMERA READY</div>
+        <div class="idle-sub">Point at an item or upload a photo.</div>
+      </div>
+    </div>
+
+    <div id="crosshair"></div>
+
+  </div>
+
+  <canvas id="snapCanvas" style="display:none"></canvas>
+
+  <div class="controls">
+
+    <button
+      id="captureBtn"
+      class="btn red"
+      type="button"
+      disabled>
+      Capture
+    </button>
+
+    <button
+      id="uploadBtn"
+      class="btn"
+      type="button">
+      Upload
+    </button>
+
+  </div>
+
+  <input
+    id="fileInput"
+    type="file"
+    accept="image/*"
+    capture="environment">
+
+  <div class="hint">
+
+    <label for="hintInput">
+      OPTIONAL IDENTIFICATION HINT
+    </label>
+
+    <input
+      id="hintInput"
+      type="text"
+      placeholder="Example: vintage Nikon camera">
+
+  </div>
+
+  <div class="status">
+
+    <div class="status-title">
+      APPRAISAL STATUS
+    </div>
+
+    <div class="steps">
+
+      <div class="step" id="step1">
+        01 — ANALYZING IMAGE
+      </div>
+
+      <div class="step" id="step2">
+        02 — IDENTIFYING ITEM
+      </div>
+
+      <div class="step" id="step3">
+        03 — ESTIMATING VALUE
+      </div>
+
+      <div class="step" id="step4">
+        04 — BUILDING APPRAISAL
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<section class="panel">
+
+  <div class="panel-title">02 / Appraisal</div>
+
+  <div id="idleState">
+    Photograph something and APPRAISR will estimate<br>
+    what you can realistically get for it.
+  </div>
+
+  <div id="loadingState">
+
+    <div class="loading">
+
+      <div>
+        <div class="spinner"></div>
+
+        <div style="
+          color:var(--cream);
+          font-family:'Bebas Neue',sans-serif;
+          font-size:22px;
+          letter-spacing:3px;">
+          APPRAISING
+        </div>
+
+        <div style="
+          color:var(--muted);
+          font-size:10px;
+          margin-top:8px;">
+          IDENTIFYING / VALUING / CHECKING
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div id="errorState">
+
+    <div class="error">
+      <strong>APPRAISAL FAILED</strong>
+      <div id="errorDetail" style="margin-top:8px"></div>
+    </div>
+
+  </div>
+
+  <div id="resultsArea"></div>
+
+</section>
+
+</div>
+
+</main>
+
+<script>
+
+let stream = null;
+let cameraActive = false;
+let capturedDataURL = null;
+
+const $ = id => document.getElementById(id);
+
+/* CAMERA */
+
+async function startCamera(){
+
+  if(!navigator.mediaDevices ||
+     !navigator.mediaDevices.getUserMedia){
+
+    showCameraMessage(
+      'Camera unavailable. Use Upload instead.'
+    );
+
+    return;
+  }
+
+  try{
+
+    if(stream){
+      stream.getTracks().forEach(track => track.stop());
+      stream = null;
+    }
+
+    stream = await navigator.mediaDevices.getUserMedia({
+      video:{
+        facingMode:{ideal:'environment'}
+      },
+      audio:false
+    });
+
+    $('videoFeed').srcObject = stream;
+
+    $('videoFeed').style.display = 'block';
+    $('cameraIdle').style.display = 'none';
+    $('capturedImage').style.display = 'none';
+    $('crosshair').classList.add('active');
+
+    cameraActive = true;
+
+    $('captureBtn').disabled = false;
+
+  }catch(error){
+
+    console.error(error);
+
+    cameraActive = false;
+    stream = null;
+
+    $('videoFeed').style.display = 'none';
+    $('cameraIdle').style.display = 'flex';
+    $('captureBtn').disabled = true;
+
+    showCameraMessage(
+      'Camera permission unavailable. Use Upload instead.'
+    );
+
+  }
+}
+
+function showCameraMessage(message){
+
+  $('cameraIdle').innerHTML = `
+    <div>
+      <div class="idle-title">APPRAISR</div>
+      <div class="idle-sub">${escapeHTML(message)}</div>
+    </div>
+  `;
+
+}
+
+/* CAPTURE */
 
 function captureAndAppraise(){
-  const v=document.getElementById('videoFeed');const c=document.getElementById('snapCanvas');const img=document.getElementById('capturedImage');
-  if(cameraActive&&v.readyState>=2){
-    c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);
-    capturedDataURL=c.toDataURL('image/jpeg',0.92);
-    const flash=document.createElement('div');flash.className='flash';document.getElementById('cameraWrap').appendChild(flash);setTimeout(()=>flash.remove(),300);
-    img.src=capturedDataURL;img.style.display='block';v.style.display='none';
-    document.getElementById('scanBeam').classList.add('active');setTimeout(()=>document.getElementById('scanBeam').classList.remove('active'),1500);
+
+  if(!cameraActive || !stream){
+    startCamera();
+    return;
   }
-  if(capturedDataURL){if(window.innerWidth<=700)setTimeout(()=>document.getElementById('rightPanel').scrollIntoView({behavior:'smooth'}),300);runAppraisal(capturedDataURL);}
+
+  const video = $('videoFeed');
+  const canvas = $('snapCanvas');
+
+  if(video.readyState < 2){
+    return;
+  }
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  const ctx = canvas.getContext('2d');
+
+  ctx.drawImage(
+    video,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  capturedDataURL =
+    canvas.toDataURL('image/jpeg',0.90);
+
+  $('capturedImage').src = capturedDataURL;
+  $('capturedImage').style.display = 'block';
+
+  $('videoFeed').style.display = 'none';
+
+  $('crosshair').classList.remove('active');
+
+  runAppraisal(capturedDataURL);
 }
 
-function handleUpload(e){
+/* UPLOAD */
 
-  const file=e.target.files[0];
+function handleUpload(event){
 
-  // Reset immediately so the same file can be selected again
-  e.target.value='';
+  const file = event.target.files[0];
 
-  if(!file)return;
+  event.target.value = '';
 
-  const r=new FileReader();
+  if(!file){
+    return;
+  }
 
-  r.onload=ev=>{
+  if(!file.type.startsWith('image/')){
+    showError('Please choose an image.');
+    return;
+  }
 
-    capturedDataURL=ev.target.result;
+  const reader = new FileReader();
 
-    const img=document.getElementById('capturedImage');
-    img.src=capturedDataURL;
-    img.style.display='block';
+  reader.onload = function(e){
 
-    document.getElementById('cameraIdle').style.display='none';
-    document.getElementById('videoFeed').style.display='none';
+    capturedDataURL = e.target.result;
 
-    document.getElementById('captureBtn').disabled=false;
-    document.getElementById('shutterBtn').disabled=false;
+    $('capturedImage').src =
+      capturedDataURL;
 
-    if(window.innerWidth<=700){
-      setTimeout(
-        ()=>document.getElementById('rightPanel').scrollIntoView({
-          behavior:'smooth'
-        }),
-        300
-      );
-    }
+    $('capturedImage').style.display =
+      'block';
+
+    $('videoFeed').style.display =
+      'none';
+
+    $('cameraIdle').style.display =
+      'none';
+
+    $('crosshair').classList.remove('active');
 
     runAppraisal(capturedDataURL);
 
   };
 
-  r.readAsDataURL(file);
+  reader.onerror = function(){
+
+    showError('Could not read that image.');
+
+  };
+
+  reader.readAsDataURL(file);
 }
 
+/* STATE */
 
+function setState(state){
 
-function setState(s){
-  document.getElementById('idleState').style.display=s==='idle'?'flex':'none';
-  document.getElementById('loadingState').classList.toggle('active',s==='loading');
-  document.getElementById('errorState').classList.toggle('active',s==='error');
-  document.getElementById('resultsArea').classList.toggle('active',s==='results');
+  $('idleState').style.display =
+    state === 'idle' ? 'flex' : 'none';
+
+  $('loadingState').classList.toggle(
+    'active',
+    state === 'loading'
+  );
+
+  $('errorState').classList.toggle(
+    'active',
+    state === 'error'
+  );
+
+  if(state !== 'results'){
+    $('resultsArea').innerHTML = '';
+  }
+
 }
 
-function setStep(n){
-  for(let i=1;i<=4;i++){const el=document.getElementById('step'+i);el.classList.remove('active','done');if(i<n)el.classList.add('done');else if(i===n)el.classList.add('active');}
+function setStep(number){
+
+  for(let i=1;i<=4;i++){
+
+    const el = $('step'+i);
+
+    el.classList.remove(
+      'active',
+      'done'
+    );
+
+    if(i < number){
+      el.classList.add('done');
+    }
+
+    if(i === number){
+      el.classList.add('active');
+    }
+
+  }
+
 }
+
+/* APPRAISAL */
 
 async function runAppraisal(dataURL){
+
   setState('loading');
   setStep(1);
 
-  [0,1800,3200,4800].forEach((t,i)=>{
-    setTimeout(()=>setStep(i+1),t);
-  });
+  setTimeout(()=>setStep(2),1200);
+  setTimeout(()=>setStep(3),2400);
+  setTimeout(()=>setStep(4),3600);
 
-  const base64 = dataURL.split(',')[1];
-  const mediaType = dataURL.split(';')[0].split(':')[1];
-  const hint = document.getElementById('hintInput').value.trim();
+  try{
 
-  try {
-    const res = await fetch('/api/appraise', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        image: base64,
-        mediaType,
-        hint
-      })
-    });
+    const parts = dataURL.split(',');
 
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || 'API error ' + res.status);
+    if(parts.length < 2){
+      throw new Error(
+        'Invalid image data.'
+      );
     }
 
-    if (!data.identified) {
-      document.getElementById('errorDetail').textContent =
-        data.errorMessage || 'Could not identify.';
-      setState('error');
+    const base64 = parts[1];
+
+    const mediaType =
+      dataURL
+        .split(';')[0]
+        .split(':')[1] ||
+      'image/jpeg';
+
+    const hint =
+      $('hintInput').value.trim();
+
+    const response = await fetch(
+      '/api/appraise',
+      {
+        method:'POST',
+
+        headers:{
+          'Content-Type':'application/json'
+        },
+
+        body:JSON.stringify({
+          image:base64,
+          mediaType:mediaType,
+          hint:hint
+        })
+      }
+    );
+
+    const text =
+      await response.text();
+
+    let data;
+
+    try{
+      data = JSON.parse(text);
+    }catch{
+      throw new Error(
+        'Backend returned an invalid response.'
+      );
+    }
+
+    if(!response.ok){
+
+      throw new Error(
+        data.error ||
+        `Server error ${response.status}`
+      );
+
+    }
+
+    if(!data.identified){
+
+      showError(
+        data.errorMessage ||
+        'APPRAISR could not identify the item.'
+      );
+
       return;
     }
 
     renderResults(data);
 
-  } catch(e) {
-    console.error(e);
+  }catch(error){
 
-    document.getElementById('errorDetail').textContent =
-      e.message || 'Appraisal failed.';
+    console.error(
+      'APPRAISR:',
+      error
+    );
 
-    setState('error');
+    showError(
+      error.message ||
+      'Appraisal failed.'
+    );
+
   }
+
 }
 
+/* RESULTS */
 
+function escapeHTML(value){
 
-function esc(s){
-  if(s===null||s===undefined)return'';
-  return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  if(value === null ||
+     value === undefined){
+
+    return '';
+
+  }
+
+  return String(value)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+
 }
-function fmt(n){return n?'$'+Math.round(n).toLocaleString():'$—';}
-function trendCls(t){return t==='up'?'trend-up':t==='down'?'trend-down':'trend-stable';}
-function trendLbl(t){return t==='up'?'↑ Rising':t==='down'?'↓ Falling':'→ Stable';}
+
+function money(value){
+
+  if(value === null ||
+     value === undefined ||
+     value === ''){
+
+    return '—';
+
+  }
+
+  const n = Number(value);
+
+  if(Number.isNaN(n)){
+    return escapeHTML(value);
+  }
+
+  return '$' +
+    Math.round(n).toLocaleString();
+
+}
 
 function renderResults(r){
-  document.getElementById('resultsArea').innerHTML=`
-    <div class="item-header">
-      <div class="item-cat">${esc(r.category)}</div>
-      <div class="item-name">${esc(r.itemName)}</div>
-      <div class="item-cond">${esc(r.condition)}</div>
-      <div class="conf-bar">
-        <span class="conf-label">ID Confidence</span>
-        <div class="bar-track"><div class="bar-fill" id="confBar"></div></div>
-        <span class="conf-pct">${esc(r.confidenceScore)}%</span>
+
+  const range =
+    r.valueRange || {};
+
+  const platforms =
+    Array.isArray(r.hotPlatforms)
+      ? r.hotPlatforms
+      : [];
+
+  const trend =
+    r.marketTrend === 'up'
+      ? '↑ RISING'
+      : r.marketTrend === 'down'
+        ? '↓ FALLING'
+        : '→ STABLE';
+
+  $('resultsArea').innerHTML = `
+
+    <div class="results-inner">
+
+      <div class="item-cat">
+        ${escapeHTML(r.category || 'ITEM')}
       </div>
-    </div>
-    <div class="value-block">
-      <div class="value-eyebrow">estimated resale value</div>
-      <div class="value-number"><span class="cur">$</span>${Math.round(r.valueRange?.mid||0).toLocaleString()}</div>
-      <div class="value-range">low ${fmt(r.valueRange?.low)} &nbsp;—&nbsp; high ${fmt(r.valueRange?.high)}</div>
-    </div>
-    <div class="value-grid">
-      <div class="stat-card">
-        <div class="stat-label">Condition</div>
-        <div class="stat-val">${esc(r.conditionScore)}<span style="font-size:14px;color:var(--muted)">/100</span></div>
+
+      <div class="item-name">
+        ${escapeHTML(r.itemName || 'Unknown item')}
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Market</div>
-        <div class="stat-val ${trendCls(r.marketTrend)}" style="font-size:18px;padding-top:4px">${trendLbl(r.marketTrend)}</div>
-        <div class="stat-sub">${esc(r.trendNote)}</div>
+
+      <div class="item-cond">
+        ${escapeHTML(r.condition || '')}
       </div>
+
+      <div class="conf">
+
+        <div class="conf-label">
+          ID CONFIDENCE —
+          ${escapeHTML(r.confidenceScore ?? '—')}%
+        </div>
+
+        <div class="bar">
+          <div
+            class="bar-fill"
+            style="width:${Math.max(
+              0,
+              Math.min(
+                100,
+                Number(r.confidenceScore) || 0
+              )
+            )}%">
+          </div>
+        </div>
+
+      </div>
+
+      <div class="value-block">
+
+        <div class="value-eyebrow">
+          ESTIMATED RESALE VALUE
+        </div>
+
+        <div class="value-number">
+          <span class="cur">$</span>${Math.round(
+            Number(range.mid) || 0
+          ).toLocaleString()}
+        </div>
+
+        <div class="value-range">
+          LOW ${money(range.low)}
+          &nbsp;—&nbsp;
+          HIGH ${money(range.high)}
+        </div>
+
+      </div>
+
+      <div class="value-grid">
+
+        <div class="stat-card">
+
+          <div class="stat-label">
+            CONDITION
+          </div>
+
+          <div class="stat-val">
+            ${escapeHTML(
+              r.conditionScore ?? '—'
+            )}/100
+          </div>
+
+        </div>
+
+        <div class="stat-card">
+
+          <div class="stat-label">
+            MARKET
+          </div>
+
+          <div class="stat-val">
+            ${trend}
+          </div>
+
+          <div class="stat-sub">
+            ${escapeHTML(
+              r.trendNote || ''
+            )}
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="desc-block">
+        ${escapeHTML(
+          r.description || ''
+        )}
+      </div>
+
+      <div class="section-label">
+        INTEL
+      </div>
+
+      <div class="intel-list">
+
+        ${
+          r.recentSale
+          ? `
+            <div class="intel-row">
+              <div class="intel-icon">🔨</div>
+              <div class="intel-body">
+                <b>RECENT SALE</b>
+                ${escapeHTML(r.recentSale)}
+              </div>
+            </div>
+          `
+          : ''
+        }
+
+        ${
+          r.sellingTip
+          ? `
+            <div class="intel-row">
+              <div class="intel-icon">💡</div>
+              <div class="intel-body">
+                <b>SELLER TIP</b>
+                ${escapeHTML(r.sellingTip)}
+              </div>
+            </div>
+          `
+          : ''
+        }
+
+        ${
+          r.localMarketNote
+          ? `
+            <div class="intel-row">
+              <div class="intel-icon">📍</div>
+              <div class="intel-body">
+                <b>LOCAL MARKET</b>
+                ${escapeHTML(r.localMarketNote)}
+              </div>
+            </div>
+          `
+          : ''
+        }
+
+        ${
+          r.redFlags
+          ? `
+            <div class="intel-row">
+              <div class="intel-icon">⚠</div>
+              <div class="intel-body">
+                <b>WATCH OUT</b>
+                ${escapeHTML(r.redFlags)}
+              </div>
+            </div>
+          `
+          : ''
+        }
+
+      </div>
+
+      ${
+        platforms.length
+        ? `
+          <div class="section-label">
+            WHERE TO SELL
+          </div>
+
+          <div class="plat-row">
+
+            ${platforms.map(
+              p => `
+                <div class="plat-tag">
+                  ${escapeHTML(p)}
+                </div>
+              `
+            ).join('')}
+
+          </div>
+        `
+        : ''
+      }
+
+      <p class="fine-print">
+        // AI ESTIMATE ONLY. VERIFY ACTIVE SALES BEFORE SELLING.
+      </p>
+
+      <button
+        class="reset-btn"
+        id="resetBtn"
+        type="button">
+        SCAN ANOTHER
+      </button>
+
     </div>
-    <div class="desc-block">${esc(r.description)}</div>
-    <div class="section-label">Intel</div>
-    <div class="intel-list">
-      ${r.recentSale?`<div class="intel-row r"><div class="intel-icon">🔨</div><div class="intel-body"><b>Recent Sale</b>${esc(r.recentSale)}</div></div>`:''}
-      ${r.sellingTip?`<div class="intel-row y"><div class="intel-icon">💡</div><div class="intel-body"><b>Seller Tip</b>${esc(r.sellingTip)}</div></div>`:''}
-      ${r.localMarketNote?`<div class="intel-row c"><div class="intel-icon">📍</div><div class="intel-body"><b>Tulsa Market</b>${esc(r.localMarketNote)}</div></div>`:''}
-      ${r.redFlags?`<div class="intel-row w"><div class="intel-icon">⚠</div><div class="intel-body"><b>Watch Out</b>${esc(r.redFlags)}</div></div>`:''}
-    </div>
-    ${r.hotPlatforms?.length?`<div class="section-label">Where To Sell</div><div class="plat-row">${r.hotPlatforms.map(p=>`<div class="plat-tag">${esc(p)}</div>`).join('')}</div>`:''}
-    <p class="fine-print">// ai estimates only. verify on active listings before selling.</p>
-    <button class="reset-btn" onclick="resetAppraisal()">scan another</button>
   `;
+
   setState('results');
-  setTimeout(()=>{const b=document.getElementById('confBar');if(b)b.style.width=r.confidenceScore+'%';},100);
+
+  $('resetBtn')
+    .addEventListener(
+      'click',
+      resetAppraisal
+    );
+
 }
 
-function resetAppraisal(){
-  capturedDataURL=null;
-  const capturedImg=document.getElementById('capturedImage');
-  capturedImg.style.display='none';
-  capturedImg.src='';
-  document.getElementById('fileInput').value='';
-  document.getElementById('hintInput').value='';
-  if(cameraActive){
-    // camera is still live — bring the video feed back instead of leaving a blank box
-    document.getElementById('videoFeed').style.display='block';
-  }else{
-    document.getElementById('cameraIdle').style.display='flex';
-  }
-  document.getElementById('captureBtn').disabled=!cameraActive;
-  document.getElementById('shutterBtn').disabled=!cameraActive;
+/* ERROR */
+
+function showError(message){
+
+  $('errorDetail').textContent =
+    message;
+
+  setState('error');
+
+}
+
+/* RESET */
+
+async function resetAppraisal(){
+
+  capturedDataURL = null;
+
+  $('capturedImage').src = '';
+  $('capturedImage').style.display = 'none';
+
+  $('hintInput').value = '';
+
+  $('fileInput').value = '';
+
   setState('idle');
-  if(window.innerWidth<=700)document.getElementById('cameraWrap').scrollIntoView({behavior:'smooth',block:'start'});
+  setStep(0);
+
+  /*
+    Always restart the camera from a clean state.
+    This fixes the second-scan state problem.
+  */
+
+  if(stream){
+
+    stream
+      .getTracks()
+      .forEach(track => track.stop());
+
+  }
+
+  stream = null;
+  cameraActive = false;
+
+  $('videoFeed').srcObject = null;
+  $('videoFeed').style.display = 'none';
+
+  $('crosshair')
+    .classList
+    .remove('active');
+
+  $('captureBtn').disabled = true;
+
+  await startCamera();
+
+  window.scrollTo({
+    top:0,
+    behavior:'smooth'
+  });
+
 }
 
-window.addEventListener('pagehide',()=>{if(stream)stream.getTracks().forEach(t=>t.stop());});
-document.addEventListener('visibilitychange',()=>{
-  // don't kill the camera on a quick tab-switch, but do release it if the page is backgrounded a while
-  if(document.hidden&&stream){
-    setTimeout(()=>{if(document.hidden&&stream){stream.getTracks().forEach(t=>t.stop());stream=null;}},15000);
-  }
-});
+/* EVENTS */
 
-const wrap=document.getElementById('cameraWrap');
-wrap.addEventListener('dragover',e=>e.preventDefault());
-wrap.addEventListener('drop',e=>{
-  e.preventDefault();const file=e.dataTransfer.files[0];
-  if(file?.type.startsWith('image/')){
-    const reader=new FileReader();
-    reader.onload=ev=>{capturedDataURL=ev.target.result;document.getElementById('capturedImage').src=capturedDataURL;document.getElementById('capturedImage').style.display='block';document.getElementById('cameraIdle').style.display='none';document.getElementById('captureBtn').disabled=false;runAppraisal(capturedDataURL);};
-    reader.readAsDataURL(file);
+$('captureBtn')
+  .addEventListener(
+    'click',
+    captureAndAppraise
+  );
+
+$('uploadBtn')
+  .addEventListener(
+    'click',
+    () => $('fileInput').click()
+  );
+
+$('fileInput')
+  .addEventListener(
+    'change',
+    handleUpload
+  );
+
+/*
+  IMPORTANT:
+  We do NOT automatically kill the camera
+  when the page becomes hidden.
+  That was contributing to the broken
+  second-scan state.
+*/
+
+window.addEventListener(
+  'pagehide',
+  () => {
+
+    if(stream){
+
+      stream
+        .getTracks()
+        .forEach(track => track.stop());
+
+      stream = null;
+      cameraActive = false;
+
+    }
+
   }
-});
+);
+
+/* START */
+
+setState('idle');
+
+startCamera();
+
 </script>
+
 </body>
 </html>
