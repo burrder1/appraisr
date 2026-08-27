@@ -370,54 +370,22 @@ function renderResults(r){
 
 function resetAppraisal(){
   capturedDataURL=null;
-
   const capturedImg=document.getElementById('capturedImage');
   capturedImg.style.display='none';
   capturedImg.src='';
-
   document.getElementById('fileInput').value='';
   document.getElementById('hintInput').value='';
-
   if(cameraActive){
+    // camera is still live — bring the video feed back instead of leaving a blank box
     document.getElementById('videoFeed').style.display='block';
-    document.getElementById('cameraIdle').style.display='none';
-    document.getElementById('crosshair').classList.add('active');
   }else{
-    document.getElementById('videoFeed').style.display='none';
     document.getElementById('cameraIdle').style.display='flex';
-    document.getElementById('crosshair').classList.remove('active');
   }
-
   document.getElementById('captureBtn').disabled=!cameraActive;
   document.getElementById('shutterBtn').disabled=!cameraActive;
-
   setState('idle');
-
-  if(window.innerWidth<=700){
-    document.getElementById('cameraWrap').scrollIntoView({
-      behavior:'smooth',
-      block:'start'
-    });
-  }
+  if(window.innerWidth<=700)document.getElementById('cameraWrap').scrollIntoView({behavior:'smooth',block:'start'});
 }
-
-
-
-  document.getElementById('captureBtn').disabled=!cameraActive;
-  document.getElementById('shutterBtn').disabled=!cameraActive;
-
-  setState('idle');
-
-  if(window.innerWidth<=700){
-    document.getElementById('cameraWrap').scrollIntoView({
-      behavior:'smooth',
-      block:'start'
-    });
-  }
-
-}
-
-
 
 window.addEventListener('pagehide',()=>{if(stream)stream.getTracks().forEach(t=>t.stop());});
 document.addEventListener('visibilitychange',()=>{
